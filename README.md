@@ -28,3 +28,11 @@ The framework must be added to the "Embedded Binaries" and "Linked Frameworks an
 Add the protobuf and nsync static libraries to the "Linked Frameworks and Libraries".
 
 Add `-force_load $(PROJECT_DIR)/tensorflow.framework/tensorflow` to the Other Linker Flags in the projects Build Settings.
+
+## Pod
+
+This framework is wrapped in the TensorIOTensorFlow pod, which you can including in a cocoapods project with:
+
+```
+pod 'TensorIOTensorFlow'
+```
