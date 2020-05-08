@@ -1,6 +1,6 @@
 # TensorFlow iOS Framework
 
-A full build of TensorFlow for iOS. Unofficial. Latest is v1.13.0 based on Tensorflow 1.13rc2
+A full build of TensorFlow for iOS. Unofficial. Latest is v1.13.5 based on Tensorflow 1.13rc2
 
 Framework targets simluator and arm64 devices only (iOS 12.0+) with full support for training MobileNetV2 models on device.
 
