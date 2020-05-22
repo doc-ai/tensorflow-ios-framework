@@ -31,8 +31,14 @@ Add `-force_load $(PROJECT_DIR)/tensorflow.framework/tensorflow` to the Other Li
 
 ## Pod
 
-This framework is wrapped in the TensorIOTensorFlow pod, which you can including in a cocoapods project with:
+This framework is wrapped in the [TensorIOTensorFlow pod](https://github.com/doc-ai/tensorio-tensorflow-ios), which you can including in a cocoapods project with:
 
 ```
 pod 'TensorIOTensorFlow'
 ```
+
+## Learn More
+
+Learn more about [compiling tensorflow on your machine](https://github.com/doc-ai/tensorflow-ios-framework/wiki).
+
+Learn more about [customizing the ops in your build](https://github.com/doc-ai/tensorflow-ios-framework/wiki/Add-and-Remove-Ops).
