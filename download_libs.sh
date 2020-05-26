@@ -1,7 +1,6 @@
 #! /bin/sh
 
-TENSORIO_BUILD_URL=https://storage.googleapis.com/tensorio-build/r1.13
-
+TENSORIO_BUILD_URL=https://storage.googleapis.com/tensorio-build/r1.15
 
 # ordered newest to oldest
 # library is stored on google with name tensorflow_tf.version_our.version

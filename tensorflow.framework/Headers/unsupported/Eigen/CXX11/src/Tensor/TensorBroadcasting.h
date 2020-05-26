@@ -37,7 +37,7 @@ struct traits<TensorBroadcastingOp<Broadcast, XprType> > : public traits<XprType
 template<typename Broadcast, typename XprType>
 struct eval<TensorBroadcastingOp<Broadcast, XprType>, Eigen::Dense>
 {
-  typedef const TensorBroadcastingOp<Broadcast, XprType>& type;
+  typedef const TensorBroadcastingOp<Broadcast, XprType> EIGEN_DEVICE_REF type;
 };
 
 template<typename Broadcast, typename XprType>
@@ -105,7 +105,11 @@ struct TensorEvaluator<const TensorBroadcastingOp<Broadcast, ArgType>, Device>
   typedef typename XprType::CoeffReturnType CoeffReturnType;
   typedef typename PacketType<CoeffReturnType, Device>::type PacketReturnType;
   static const int PacketSize = PacketType<CoeffReturnType, Device>::size;
+  protected: //  all the non-static fields must have the same access control, otherwise the TensorEvaluator wont be standard layout;
   bool isCopy, nByOne, oneByN;
+  public:
+  typedef StorageMemory<CoeffReturnType, Device> Storage;
+  typedef typename Storage::Type EvaluatorPointerType;
 
   enum {
     IsAligned         = true,
@@ -205,10 +209,18 @@ struct TensorEvaluator<const TensorBroadcastingOp<Broadcast, ArgType>, Device>
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Dimensions& dimensions() const { return m_dimensions; }
 
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE bool evalSubExprsIfNeeded(Scalar* /*data*/) {
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE bool evalSubExprsIfNeeded(EvaluatorPointerType) {
     m_impl.evalSubExprsIfNeeded(NULL);
     return true;
   }
+
+#ifdef EIGEN_USE_THREADS
+  template <typename EvalSubExprsCallback>
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void evalSubExprsIfNeededAsync(
+      EvaluatorPointerType, EvalSubExprsCallback done) {
+    m_impl.evalSubExprsIfNeededAsync(nullptr, [done](bool) { done(true); });
+  }
+#endif  // EIGEN_USE_THREADS
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void cleanup() {
     m_impl.cleanup();
@@ -238,6 +250,7 @@ struct TensorEvaluator<const TensorBroadcastingOp<Broadcast, ArgType>, Device>
   // TODO: attempt to speed this up. The integer divisions and modulo are slow
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Index indexColMajor(Index index) const {
     Index inputIndex = 0;
+    EIGEN_UNROLL_LOOP
     for (int i = NumDims - 1; i > 0; --i) {
       const Index idx = index / m_outputStrides[i];
       if (internal::index_statically_eq<Broadcast>(i, 1)) {
@@ -272,6 +285,7 @@ struct TensorEvaluator<const TensorBroadcastingOp<Broadcast, ArgType>, Device>
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Index indexRowMajor(Index index) const {
     Index inputIndex = 0;
+    EIGEN_UNROLL_LOOP
     for (int i = 0; i < NumDims - 1; ++i) {
       const Index idx = index / m_outputStrides[i];
       if (internal::index_statically_eq<Broadcast>(i, 1)) {
@@ -376,6 +390,7 @@ struct TensorEvaluator<const TensorBroadcastingOp<Broadcast, ArgType>, Device>
       values[0] = m_impl.coeff(inputIndex);
       return internal::pload1<PacketReturnType>(values);
     } else {
+      EIGEN_UNROLL_LOOP
       for (int i = 0, cur = 0; i < PacketSize; ++i, ++cur) {
         if (outputOffset + cur < m_outputStrides[endDim]) {
           values[i] = m_impl.coeff(inputIndex);
@@ -410,6 +425,7 @@ struct TensorEvaluator<const TensorBroadcastingOp<Broadcast, ArgType>, Device>
       return m_impl.template packet<Unaligned>(inputIndex);
     } else {
       EIGEN_ALIGN_MAX typename internal::remove_const<CoeffReturnType>::type values[PacketSize];
+      EIGEN_UNROLL_LOOP
       for (int i = 0; i < PacketSize; ++i) {
         if (inputIndex > m_inputStrides[dim]-1) {
           inputIndex = 0;
@@ -441,6 +457,7 @@ struct TensorEvaluator<const TensorBroadcastingOp<Broadcast, ArgType>, Device>
       values[0] = m_impl.coeff(inputIndex);
       return internal::pload1<PacketReturnType>(values);
     } else {
+      EIGEN_UNROLL_LOOP
       for (int i = 0, cur = 0; i < PacketSize; ++i, ++cur) {
         if (outputOffset + cur < m_outputStrides[dim]) {
           values[i] = m_impl.coeff(inputIndex);
@@ -465,6 +482,7 @@ struct TensorEvaluator<const TensorBroadcastingOp<Broadcast, ArgType>, Device>
     const Index originalIndex = index;
 
     Index inputIndex = 0;
+    EIGEN_UNROLL_LOOP
     for (int i = NumDims - 1; i > 0; --i) {
       const Index idx = index / m_outputStrides[i];
       if (internal::index_statically_eq<Broadcast>(i, 1)) {
@@ -500,6 +518,7 @@ struct TensorEvaluator<const TensorBroadcastingOp<Broadcast, ArgType>, Device>
     } else {
       EIGEN_ALIGN_MAX typename internal::remove_const<CoeffReturnType>::type values[PacketSize];
       values[0] = m_impl.coeff(inputIndex);
+      EIGEN_UNROLL_LOOP
       for (int i = 1; i < PacketSize; ++i) {
         if (innermostLoc + i < m_impl.dimensions()[0]) {
           values[i] = m_impl.coeff(inputIndex+i);
@@ -521,6 +540,7 @@ struct TensorEvaluator<const TensorBroadcastingOp<Broadcast, ArgType>, Device>
     const Index originalIndex = index;
 
     Index inputIndex = 0;
+    EIGEN_UNROLL_LOOP
     for (int i = 0; i < NumDims - 1; ++i) {
       const Index idx = index / m_outputStrides[i];
       if (internal::index_statically_eq<Broadcast>(i, 1)) {
@@ -556,6 +576,7 @@ struct TensorEvaluator<const TensorBroadcastingOp<Broadcast, ArgType>, Device>
     } else {
       EIGEN_ALIGN_MAX typename internal::remove_const<CoeffReturnType>::type values[PacketSize];
       values[0] = m_impl.coeff(inputIndex);
+      EIGEN_UNROLL_LOOP
       for (int i = 1; i < PacketSize; ++i) {
         if (innermostLoc + i < m_impl.dimensions()[NumDims-1]) {
           values[i] = m_impl.coeff(inputIndex+i);
@@ -572,6 +593,7 @@ struct TensorEvaluator<const TensorBroadcastingOp<Broadcast, ArgType>, Device>
   costPerCoeff(bool vectorized) const {
     double compute_cost = TensorOpCost::AddCost<Index>();
     if (!isCopy && NumDims > 0) {
+      EIGEN_UNROLL_LOOP
       for (int i = NumDims - 1; i > 0; --i) {
         compute_cost += TensorOpCost::DivCost<Index>();
         if (internal::index_statically_eq<Broadcast>(i, 1)) {
@@ -845,12 +867,17 @@ struct TensorEvaluator<const TensorBroadcastingOp<Broadcast, ArgType>, Device>
     }
   }
 
-  EIGEN_DEVICE_FUNC typename Eigen::internal::traits<XprType>::PointerType data() const { return NULL; }
+  EIGEN_DEVICE_FUNC EvaluatorPointerType data() const { return NULL; }
 
   const TensorEvaluator<ArgType, Device>& impl() const { return m_impl; }
 
   Broadcast functor() const { return m_broadcast; }
-
+  #ifdef EIGEN_USE_SYCL
+  // binding placeholder accessors to a command group handler for SYCL
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void bind(cl::sycl::handler &cgh) const {
+    m_impl.bind(cgh);
+  }
+  #endif
  private:
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void BroadcastBlock(
       const Dimensions& input_block_sizes,
@@ -874,9 +901,9 @@ struct TensorEvaluator<const TensorBroadcastingOp<Broadcast, ArgType>, Device>
     BroadcastTensorBlockReader::Run(&broadcast_block, input_block.data());
   }
 
- protected:
-  const Device& m_device;
-  const Broadcast m_broadcast;
+protected:
+  const Device EIGEN_DEVICE_REF m_device;
+  const typename internal::remove_reference<Broadcast>::type m_broadcast;
   Dimensions m_dimensions;
   array<Index, NumDims> m_outputStrides;
   array<Index, NumDims> m_inputStrides;

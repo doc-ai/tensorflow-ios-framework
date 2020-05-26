@@ -15,6 +15,8 @@ limitations under the License.
 #ifndef TENSORFLOW_LITE_KERNELS_INTERNAL_TENSOR_UTILS_H_
 #define TENSORFLOW_LITE_KERNELS_INTERNAL_TENSOR_UTILS_H_
 
+#include <algorithm>
+
 #include "tensorflow/lite/c/builtin_op_data.h"
 
 #if defined(_MSC_VER)
@@ -55,6 +57,22 @@ void MatrixBatchVectorMultiplyAccumulate(const float* matrix, int m_rows,
                                          int n_batch, float* result,
                                          int result_stride);
 
+// Same as the function above, but the matrix is stored in block compressed
+// sparse row format with block pattern 1x16 which consists of two arrays:
+//   1. A matrix array stores non-zero blocks of the matrix in row major.
+//   2. A ledger array stores nrows groups, one group per row. Each group starts
+//   with
+//      an integer representing the number of non-zero blocks for the
+//      corresponding row and follows with column indexes of the first element
+//      of each non-zero block.
+// This function assumes that
+//   1. m_cols is a multiple of 16 so that all blocks are full blocks.
+//   2. m_cols < 254 * 16 so that block index can be represented by uint8.
+void SparseMatrixBatchVectorMultiplyAccumulate(
+    const float* __restrict__ matrix, const uint8_t* __restrict__ ledger,
+    int m_rows, int m_cols, const float* __restrict__ vector, int n_batch,
+    float* __restrict__ result, int result_stride);
+
 // Same as the function above, but for values quantized using symmetric
 // quantization (e.g. by calling SymmetricQuantizeFloats).
 // The passed scaling factors is a buffer of the quantization scaling factors
@@ -66,6 +84,64 @@ void MatrixBatchVectorMultiplyAccumulate(
     const int8_t* __restrict__ matrix, const int m_rows, const int m_cols,
     const int8_t* __restrict__ vectors, const float* scaling_factors,
     int n_batch, float* __restrict__ result, int result_stride);
+
+// Same as the function above, but the matrix is stored in block compressed
+// sparse row format with block pattern 1x16 which consists of two arrays:
+//   1. A matrix array stores non-zero blocks of the matrix in row major.
+//   2. A ledger array stores nrows groups, one group per row. Each group starts
+//   with
+//      an integer representing the number of non-zero blocks for the
+//      corresponding row followed by column index of the first element of
+//      each non-zero block.
+// This function assumes that
+//   1. m_cols is a multiple of 16 so that all blocks are full blocks.
+//   2. m_cols < 254 * 16 so that block index can be represented by uint8.
+void SparseMatrixBatchVectorMultiplyAccumulate(
+    const int8_t* __restrict__ matrix, const uint8_t* ledger, const int m_rows,
+    const int m_cols, const int8_t* __restrict__ vectors,
+    const float* scaling_factors, int n_batch, float* __restrict__ result,
+    int result_stride);
+
+void MatrixBatchVectorMultiplyAccumulate(
+    const int8_t* input, int32_t input_zeropoint,
+    const int8_t* input_to_gate_weights, int32_t multiplier, int32_t shift,
+    const int32_t* gate_bias, int32_t n_batch, int32_t n_input,
+    int32_t n_output, int32_t output_zp, int16_t* output);
+
+void MatrixBatchVectorMultiplyAccumulate(
+    const int8_t* input, int32_t input_zeropoint,
+    const int8_t* input_to_gate_weights, int32_t multiplier, int32_t shift,
+    const int32_t* gate_bias, int32_t n_batch, int32_t n_input,
+    int32_t n_output, int32_t output_zp, int8_t* output);
+
+void ApplyLayerNorm(const int16_t* input, const int16_t* layer_norm_weights,
+                    const int32_t* bias, int32_t layer_norm_scale_a,
+                    int32_t layer_norm_scale_b, int32_t variance_limit,
+                    int n_batch, int n_input, int16_t* output);
+
+void ApplySigmoid(const int16_t* input, int32_t n_batch, int32_t n_input,
+                  int16_t* output);
+
+void ApplyTanh3(const int16_t* input, int32_t n_batch, int32_t n_input,
+                int16_t* output);
+
+void ApplyTanh4(const int16_t* input, int32_t n_batch, int32_t n_input,
+                int16_t* output);
+
+void CwiseMul(const int16_t* input_1, const int16_t* input_2, int n_batch,
+              int n_input, int shift, int16_t* output);
+
+void CwiseMul(const int16_t* input_1, const int16_t* input_2, int n_batch,
+              int n_input, int shift, int8_t* output);
+
+void CwiseAdd(const int16_t* input_1, const int16_t* input_2, int n_batch,
+              int n_input, int16_t* output);
+
+void CwiseClipping(int16_t* input, const int16_t clipping_value,
+                   int32_t n_batch, int32_t n_input);
+
+void CwiseClipping(int8_t* input, const int8_t clipping_value, int32_t n_batch,
+                   int32_t n_input);
 
 // Cwise product of two vectors.
 void VectorVectorCwiseProduct(const float* vector1, const float* vector2,
@@ -118,8 +194,13 @@ void VectorBatchVectorAdd(const float* vector, int v_size, int n_batch,
                           float* batch_vector);
 
 // Batch vector initialization with another vector.
-void VectorBatchVectorAssign(const float* vector, int v_size, int n_batch,
-                             float* batch_vector);
+template <typename T>
+void VectorBatchVectorAssign(const T* vector, int v_size, int n_batch,
+                             T* batch_vector) {
+  for (int b = 0; b < n_batch; b++) {
+    std::copy_n(vector, v_size, batch_vector + b * v_size);
+  }
+}
 
 // Apply sigmoid to elements of a vector.
 void ApplySigmoidToVector(const float* vector, int v_size, float* result);
@@ -128,14 +209,8 @@ void ApplySigmoidToVector(const float* vector, int v_size, float* result);
 void ApplyActivationToVector(const float* vector, int v_size,
                              TfLiteFusedActivation activation, float* result);
 
-// Copy vector to another vector.
-void CopyVector(const float* vector, int v_size, float* result);
-
 // Compute "1.0f - elements of vector" (used in CIFG).
 void Sub1Vector(const float* vector, int v_size, float* result);
-
-// Fill vector with 0.f.
-void ZeroVector(float* vector, int v_size);
 
 // Multiply all elements of vector with a scalar.
 void VectorScalarMultiply(const int8_t* vector, int v_size, float scale,
@@ -146,7 +221,13 @@ void ClipVector(const float* vector, int v_size, float abs_limit,
                 float* result);
 
 // Shift left a vector in place with v_size size.
-void VectorShiftLeft(float* vector, int v_size, float shift_value);
+template <typename T>
+void VectorShiftLeft(T* vector, int v_size, const T& shift_value) {
+  // When copying overlapping ranges, std::copy is appropriate when beginning of
+  // the destination range is outside the source range.
+  std::copy(vector + 1, vector + v_size, vector);
+  vector[v_size - 1] = shift_value;
+}
 
 // Reduce-sum on a float input vector:
 // input_vector: float pointer to input vector.
