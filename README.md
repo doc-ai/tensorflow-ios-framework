@@ -1,6 +1,6 @@
 # TensorFlow iOS Framework
 
-A full build of TensorFlow for iOS. Unofficial. Latest is v1.13.6 based on Tensorflow 1.13rc2.
+A full build of TensorFlow for iOS. Unofficial. Latest is v1.15 based on Tensorflow r1.15.
 
 Framework targets simluator and arm64 devices only (iOS 12.0+) with full support for training MobileNetV2 models on device.
 
@@ -8,18 +8,18 @@ Framework targets simluator and arm64 devices only (iOS 12.0+) with full support
 
 This repository contains only the required header files for a portable build of tensorflow for ios. The tensorflow static library must be added to the root directory of the framework.
 
-To create this framework, first run *build_all_ios.sh* from *tensorflow/contrib/makefile* on branch *r1.13.doc.ai* in our custom [tensorflow repository](https://github.com/doc-ai/tensorflow/tree/r1.13.doc.ai) and then run *create_full_ios_frameworks.sh* in the same directory.
+To create this framework, first run *build_all_ios.sh* from *tensorflow/contrib/makefile* on branch *r1.15.doc.ai* in our custom [tensorflow repository](https://github.com/doc-ai/tensorflow/tree/r1.15.doc.ai) and then run *create_full_ios_frameworks.sh* in the same directory.
 
 The following static library must be added to the root directory of this framework. Remove the *.a* extension:
 
-- [tensorflow.a](https://storage.googleapis.com/tensorio-build/r1.13/tensorflow)
+- [tensorflow.a](https://storage.googleapis.com/tensorio-build/r1.15/tensorflow)
 
 You may also run the *download_libs.sh* script in this repository to download and add the tensorflow static library to the framework.
 
 The following additional static libraries must be added as dependencies to any project which uses this framework:
 
-- [protobuf.a](https://storage.googleapis.com/tensorio-build/r1.13/libprotobuf)
-- [nsync.a](https://storage.googleapis.com/tensorio-build/r1.13/nsync)
+- [protobuf.a](https://storage.googleapis.com/tensorio-build/r1.15/libprotobuf)
+- [nsync.a](https://storage.googleapis.com/tensorio-build/r1.15/nsync)
 
 ## Usage
 
