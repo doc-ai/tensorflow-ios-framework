@@ -145,13 +145,13 @@ template<> struct unpacket_traits<Packet4f>
   typedef float     type;
   typedef Packet4f  half;
   typedef Packet4i  integer_packet;
-  enum {size=4, alignment=Aligned16};
+  enum {size=4, alignment=Aligned16, vectorizable=true, masked_load_available=false, masked_store_available=false};
 };
 template<> struct unpacket_traits<Packet4i>
 {
   typedef int32_t   type;
   typedef Packet4i  half;
-  enum {size=4, alignment=Aligned16};
+  enum {size=4, alignment=Aligned16, vectorizable=true, masked_load_available=false, masked_store_available=false};
 };
 
 template<> EIGEN_STRONG_INLINE Packet4f pset1<Packet4f>(const float&  from) { return vdupq_n_f32(from); }
@@ -375,8 +375,8 @@ template<> EIGEN_STRONG_INLINE void prefetch<float>  (const float*    addr) { EI
 template<> EIGEN_STRONG_INLINE void prefetch<int32_t>(const int32_t*  addr) { EIGEN_ARM_PREFETCH(addr); }
 
 // FIXME only store the 2 first elements ?
-template<> EIGEN_STRONG_INLINE float   pfirst<Packet4f>(const Packet4f& a) { float   EIGEN_ALIGN16 x[4]; vst1q_f32(x, a); return x[0]; }
-template<> EIGEN_STRONG_INLINE int32_t pfirst<Packet4i>(const Packet4i& a) { int32_t EIGEN_ALIGN16 x[4]; vst1q_s32(x, a); return x[0]; }
+template<> EIGEN_STRONG_INLINE float   pfirst<Packet4f>(const Packet4f& a) { EIGEN_ALIGN16 float   x[4]; vst1q_f32(x, a); return x[0]; }
+template<> EIGEN_STRONG_INLINE int32_t pfirst<Packet4i>(const Packet4i& a) { EIGEN_ALIGN16 int32_t x[4]; vst1q_s32(x, a); return x[0]; }
 
 template<> EIGEN_STRONG_INLINE Packet4f preverse(const Packet4f& a) {
   float32x2_t a_lo, a_hi;
@@ -551,6 +551,13 @@ template<> EIGEN_STRONG_INLINE int32_t predux_max<Packet4i>(const Packet4i& a)
   return vget_lane_s32(max, 0);
 }
 
+template<> EIGEN_STRONG_INLINE bool predux_any(const Packet4f& x)
+{
+  uint32x2_t tmp = vorr_u32(vget_low_u32( vreinterpretq_u32_f32(x)),
+                            vget_high_u32(vreinterpretq_u32_f32(x)));
+  return vget_lane_u32(vpmax_u32(tmp,tmp),0);
+}
+
 // this PALIGN_NEON business is to work around a bug in LLVM Clang 3.0 causing incorrect compilation errors,
 // see bug 347 and this LLVM bug: http://llvm.org/bugs/show_bug.cgi?id=11074
 #define PALIGN_NEON(Offset,Type,Command) \
@@ -650,7 +657,7 @@ template<> struct packet_traits<double>  : default_packet_traits
   };
 };
 
-template<> struct unpacket_traits<Packet2d> { typedef double  type; enum {size=2, alignment=Aligned16}; typedef Packet2d half; };
+template<> struct unpacket_traits<Packet2d> { typedef double  type; enum {size=2, alignment=Aligned16, vectorizable=true, masked_load_available=false, masked_store_available=false}; typedef Packet2d half; };
 
 template<> EIGEN_STRONG_INLINE Packet2d pset1<Packet2d>(const double&  from) { return vdupq_n_f64(from); }
 
@@ -703,6 +710,8 @@ template<> EIGEN_STRONG_INLINE Packet2d pandnot<Packet2d>(const Packet2d& a, con
 {
   return vreinterpretq_f64_u64(vbicq_u64(vreinterpretq_u64_f64(a),vreinterpretq_u64_f64(b)));
 }
+
+template<> EIGEN_STRONG_INLINE Packet2d pcmp_eq(const Packet2d& a, const Packet2d& b) { return vreinterpretq_f64_u64(vceqq_f64(a,b)); }
 
 template<> EIGEN_STRONG_INLINE Packet2d pload<Packet2d>(const double* from) { EIGEN_DEBUG_ALIGNED_LOAD return vld1q_f64(from); }
 

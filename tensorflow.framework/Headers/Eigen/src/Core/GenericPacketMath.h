@@ -83,6 +83,7 @@ struct default_packet_traits
     HasPolygamma = 0,
     HasErf = 0,
     HasErfc = 0,
+    HasNdtri = 0,
     HasI0e = 0,
     HasI1e = 0,
     HasIGamma = 0,
@@ -214,6 +215,21 @@ pxor(const Packet& a, const Packet& b) { return a ^ b; }
 template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
 pandnot(const Packet& a, const Packet& b) { return a & (~b); }
 
+/** \internal \returns ones */
+template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
+ptrue(const Packet& /*a*/) { Packet b; memset((void*)&b, 0xff, sizeof(b)); return b;}
+
+template <typename RealScalar>
+EIGEN_DEVICE_FUNC inline std::complex<RealScalar> ptrue(const std::complex<RealScalar>& /*a*/) {
+  RealScalar b;
+  b = ptrue(b);
+  return std::complex<RealScalar>(b, b);
+}
+
+/** \internal \returns the bitwise not of \a a */
+template <typename Packet> EIGEN_DEVICE_FUNC inline Packet
+pnot(const Packet& a) { return pxor(ptrue(a), a);}
+
 /** \internal \returns \a a shifted by N bits to the right */
 template<int N> EIGEN_DEVICE_FUNC inline int
 pshiftright(const int& a) { return a >> N; }
@@ -242,27 +258,47 @@ pldexp(const Packet &a, const Packet &exponent) { return std::ldexp(a,exponent);
 template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
 pzero(const Packet& a) { return pxor(a,a); }
 
+template<> EIGEN_DEVICE_FUNC inline float pzero<float>(const float& a) {
+  EIGEN_UNUSED_VARIABLE(a);
+  return 0.;
+}
+
+template<> EIGEN_DEVICE_FUNC inline double pzero<double>(const double& a) {
+  EIGEN_UNUSED_VARIABLE(a);
+  return 0.;
+}
+
 /** \internal \returns bits of \a or \b according to the input bit mask \a mask */
 template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
 pselect(const Packet& mask, const Packet& a, const Packet& b) {
   return por(pand(a,mask),pandnot(b,mask));
 }
 
+template<> EIGEN_DEVICE_FUNC inline float pselect<float>(
+    const float& mask, const float& a, const float&b) {
+  return numext::equal_strict(mask,0.f) ? b : a;
+}
+
+template<> EIGEN_DEVICE_FUNC inline double pselect<double>(
+    const double& mask, const double& a, const double& b) {
+  return numext::equal_strict(mask,0.) ? b : a;
+}
+
 /** \internal \returns a <= b as a bit mask */
 template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-pcmp_le(const Packet& a, const Packet& b); /* { return a<=b ? pnot(pxor(a,a)) : pxor(a,a); } */
+pcmp_le(const Packet& a, const Packet& b)  { return a<=b ? ptrue(a) : pzero(a); }
 
 /** \internal \returns a < b as a bit mask */
 template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-pcmp_lt(const Packet& a, const Packet& b); /* { return a<b  ? pnot(pxor(a,a)) : pxor(a,a); } */
+pcmp_lt(const Packet& a, const Packet& b)  { return a<b ? ptrue(a) : pzero(a); }
 
 /** \internal \returns a == b as a bit mask */
 template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-pcmp_eq(const Packet& a, const Packet& b); /* { return a==b ? pnot(pxor(a,a)) : pxor(a,a); } */
+pcmp_eq(const Packet& a, const Packet& b) { return a==b ? ptrue(a) : pzero(a); }
 
 /** \internal \returns a < b or a==NaN or b==NaN as a bit mask */
 template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-pcmp_lt_or_nan(const Packet& a, const Packet& b); /* { return pnot(pcmp_le(b,a)); } */
+pcmp_lt_or_nan(const Packet& a, const Packet& b) { return pnot(pcmp_le(b,a)); } 
 
 /** \internal \returns a packet version of \a *from, from must be 16 bytes aligned */
 template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
@@ -271,6 +307,14 @@ pload(const typename unpacket_traits<Packet>::type* from) { return *from; }
 /** \internal \returns a packet version of \a *from, (un-aligned load) */
 template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
 ploadu(const typename unpacket_traits<Packet>::type* from) { return *from; }
+
+/** \internal \returns a packet version of \a *from, (un-aligned masked load)
+ * There is no generic implementation. We only have implementations for specialized
+ * cases. Generic case should not be called.
+ */
+template<typename Packet> EIGEN_DEVICE_FUNC inline
+typename enable_if<unpacket_traits<Packet>::masked_load_available, Packet>::type
+ploadu(const typename unpacket_traits<Packet>::type* from, typename unpacket_traits<Packet>::mask_t umask);
 
 /** \internal \returns a packet with constant coefficients \a a, e.g.: (a,a,a,a) */
 template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
@@ -348,6 +392,15 @@ template<typename Scalar, typename Packet> EIGEN_DEVICE_FUNC inline void pstore(
 template<typename Scalar, typename Packet> EIGEN_DEVICE_FUNC inline void pstoreu(Scalar* to, const Packet& from)
 {  (*to) = from; }
 
+/** \internal copy the packet \a from to \a *to, (un-aligned store with a mask)
+ * There is no generic implementation. We only have implementations for specialized
+ * cases. Generic case should not be called.
+ */
+template<typename Scalar, typename Packet>
+EIGEN_DEVICE_FUNC inline
+typename enable_if<unpacket_traits<Packet>::masked_store_available, void>::type
+pstoreu(Scalar* to, const Packet& from, typename unpacket_traits<Packet>::mask_t umask);
+
  template<typename Scalar, typename Packet> EIGEN_DEVICE_FUNC inline Packet pgather(const Scalar* from, Index /*stride*/)
  { return ploadu<Packet>(from); }
 
@@ -393,17 +446,38 @@ typename conditional<(unpacket_traits<Packet>::size%8)==0,typename unpacket_trai
 predux_half_dowto4(const Packet& a)
 { return a; }
 
-/** \internal \returns the product of the elements of \a a*/
+/** \internal \returns the product of the elements of \a a */
 template<typename Packet> EIGEN_DEVICE_FUNC inline typename unpacket_traits<Packet>::type predux_mul(const Packet& a)
 { return a; }
 
-/** \internal \returns the min of the elements of \a a*/
+/** \internal \returns the min of the elements of \a a */
 template<typename Packet> EIGEN_DEVICE_FUNC inline typename unpacket_traits<Packet>::type predux_min(const Packet& a)
 { return a; }
 
-/** \internal \returns the max of the elements of \a a*/
+/** \internal \returns the max of the elements of \a a */
 template<typename Packet> EIGEN_DEVICE_FUNC inline typename unpacket_traits<Packet>::type predux_max(const Packet& a)
 { return a; }
+
+/** \internal \returns true if all coeffs of \a a means "true"
+  * It is supposed to be called on values returned by pcmp_*.
+  */
+// not needed yet
+// template<typename Packet> EIGEN_DEVICE_FUNC inline bool predux_all(const Packet& a)
+// { return bool(a); }
+
+/** \internal \returns true if any coeffs of \a a means "true"
+  * It is supposed to be called on values returned by pcmp_*.
+  */
+template<typename Packet> EIGEN_DEVICE_FUNC inline bool predux_any(const Packet& a)
+{
+  // Dirty but generic implementation where "true" is assumed to be non 0 and all the sames.
+  // It is expected that "true" is either:
+  //  - Scalar(1)
+  //  - bits full of ones (NaN for floats),
+  //  - or first bit equals to 1 (1 for ints, smallest denormal for floats).
+  // For all these cases, taking the sum is just fine, and this boils down to a no-op for scalars.
+  return bool(predux(a));
+}
 
 /** \internal \returns the reversed elements of \a a*/
 template<typename Packet> EIGEN_DEVICE_FUNC inline Packet preverse(const Packet& a)
@@ -468,7 +542,7 @@ Packet pexpm1(const Packet& a) { return numext::expm1(a); }
 
 /** \internal \returns the log of \a a (coeff-wise) */
 template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-Packet plog(const Packet& a) { using std::log; return log(a); }
+Packet plog(const Packet& a) { EIGEN_USING_STD(log); return log(a); }
 
 /** \internal \returns the log1p of \a a (coeff-wise) */
 template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
@@ -480,7 +554,7 @@ Packet plog10(const Packet& a) { using std::log10; return log10(a); }
 
 /** \internal \returns the square-root of \a a (coeff-wise) */
 template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-Packet psqrt(const Packet& a) { using std::sqrt; return sqrt(a); }
+Packet psqrt(const Packet& a) { EIGEN_USING_STD(sqrt); return sqrt(a); }
 
 /** \internal \returns the reciprocal square-root of \a a (coeff-wise) */
 template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS

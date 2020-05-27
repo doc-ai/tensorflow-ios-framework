@@ -97,6 +97,8 @@ struct TensorEvaluator<const TensorAssignOp<LeftArgType, RightArgType>, Device>
   typedef typename XprType::CoeffReturnType CoeffReturnType;
   typedef typename PacketType<CoeffReturnType, Device>::type PacketReturnType;
   typedef typename TensorEvaluator<RightArgType, Device>::Dimensions Dimensions;
+  typedef StorageMemory<CoeffReturnType, Device> Storage;
+  typedef typename Storage::Type EvaluatorPointerType;
 
   static const int PacketSize = PacketType<CoeffReturnType, Device>::size;
   static const int NumDims = XprType::NumDims;
@@ -136,7 +138,7 @@ struct TensorEvaluator<const TensorAssignOp<LeftArgType, RightArgType>, Device>
     return m_rightImpl.dimensions();
   }
 
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE bool evalSubExprsIfNeeded(Scalar*) {
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE bool evalSubExprsIfNeeded(EvaluatorPointerType) {
     eigen_assert(dimensions_match(m_leftImpl.dimensions(), m_rightImpl.dimensions()));
     m_leftImpl.evalSubExprsIfNeeded(NULL);
     // If the lhs provides raw access to its storage area (i.e. if m_leftImpl.data() returns a non
@@ -145,6 +147,18 @@ struct TensorEvaluator<const TensorAssignOp<LeftArgType, RightArgType>, Device>
     // by the rhs to the lhs.
     return m_rightImpl.evalSubExprsIfNeeded(m_leftImpl.data());
   }
+
+#ifdef EIGEN_USE_THREADS
+  template <typename EvalSubExprsCallback>
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void evalSubExprsIfNeededAsync(
+      EvaluatorPointerType, EvalSubExprsCallback done) {
+    m_leftImpl.evalSubExprsIfNeededAsync(nullptr, [this, done](bool) {
+      m_rightImpl.evalSubExprsIfNeededAsync(
+          m_leftImpl.data(), [done](bool need_assign) { done(need_assign); });
+    });
+  }
+#endif  // EIGEN_USE_THREADS
+
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void cleanup() {
     m_leftImpl.cleanup();
     m_rightImpl.cleanup();
@@ -154,6 +168,7 @@ struct TensorEvaluator<const TensorAssignOp<LeftArgType, RightArgType>, Device>
     m_leftImpl.coeffRef(i) = m_rightImpl.coeff(i);
   }
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void evalPacket(Index i) {
+
     const int LhsStoreMode = TensorEvaluator<LeftArgType, Device>::IsAligned ? Aligned : Unaligned;
     const int RhsLoadMode = TensorEvaluator<RightArgType, Device>::IsAligned ? Aligned : Unaligned;
     m_leftImpl.template writePacket<LhsStoreMode>(i, m_rightImpl.template packet<RhsLoadMode>(i));
@@ -199,13 +214,15 @@ struct TensorEvaluator<const TensorAssignOp<LeftArgType, RightArgType>, Device>
       m_leftImpl.writeBlock(*block);
     }
   }
+#ifdef EIGEN_USE_SYCL
+  // binding placeholder accessors to a command group handler for SYCL
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void bind(cl::sycl::handler &cgh) const {
+    m_leftImpl.bind(cgh);
+    m_rightImpl.bind(cgh);
+  }
+#endif
 
-  /// required by sycl in order to extract the accessor
-  const TensorEvaluator<LeftArgType, Device>& left_impl() const { return m_leftImpl; }
-  /// required by sycl in order to extract the accessor
-  const TensorEvaluator<RightArgType, Device>& right_impl() const { return m_rightImpl; }
-
-  EIGEN_DEVICE_FUNC typename Eigen::internal::traits<XprType>::PointerType data() const { return m_leftImpl.data(); }
+  EIGEN_DEVICE_FUNC EvaluatorPointerType data() const { return m_leftImpl.data(); }
 
  private:
   TensorEvaluator<LeftArgType, Device> m_leftImpl;
