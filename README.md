@@ -6,7 +6,7 @@ Framework targets simluator and arm64 devices only (iOS 12.0+) with full support
 
 ## Notes
 
-This repository contains only the required header files for a portable build of tensorflow for ios. The tensorflow static library must be added to the root directory of the framework.
+This repository contains only the required header files for a portable build of tensorflow for iOS. The tensorflow static library must be added to the root directory of the framework.
 
 To create this framework, first run *build_all_ios.sh* from *tensorflow/contrib/makefile* on branch *r1.15.doc.ai* in our custom [tensorflow repository](https://github.com/doc-ai/tensorflow/tree/r1.15.doc.ai) and then run *create_full_ios_frameworks.sh* in the same directory.
 
