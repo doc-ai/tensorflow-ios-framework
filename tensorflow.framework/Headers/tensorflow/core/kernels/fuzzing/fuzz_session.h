@@ -145,7 +145,7 @@ class FuzzSession {
 class FuzzStringInputOp : public FuzzSession {
   void FuzzImpl(const uint8_t* data, size_t size) final {
     Tensor input_tensor(tensorflow::DT_STRING, TensorShape({}));
-    input_tensor.scalar<tstring>()() =
+    input_tensor.scalar<string>()() =
         string(reinterpret_cast<const char*>(data), size);
     RunInputs({{"input", input_tensor}});
   }

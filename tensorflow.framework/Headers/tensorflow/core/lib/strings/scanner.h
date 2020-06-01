@@ -17,10 +17,9 @@ limitations under the License.
 #define TENSORFLOW_LIB_STRINGS_SCANNER_H_
 
 #include <string>
-
+#include "tensorflow/core/lib/core/stringpiece.h"
 #include "tensorflow/core/lib/strings/str_util.h"
 #include "tensorflow/core/platform/macros.h"
-#include "tensorflow/core/platform/stringpiece.h"
 
 namespace tensorflow {
 namespace strings {

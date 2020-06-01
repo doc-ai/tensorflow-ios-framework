@@ -30,13 +30,7 @@ namespace stream_executor {
 // see comment on `AllowsAsynchronousDeallocation()`.
 class TfAllocatorAdapter : public DeviceMemoryAllocator {
  public:
-  // stream: a Stream on which the allocator can only be used. If non-null, the
-  // allocator can not be used on any other stream.
-  TfAllocatorAdapter(tensorflow::Allocator *wrapped, Stream *stream);
-
-  // Constructor for the cases where `stream` can not be provided.
-  TfAllocatorAdapter(tensorflow::Allocator *wrapped, Platform *platform);
-
+  TfAllocatorAdapter(const Platform *platform, tensorflow::Allocator *wrapped);
   ~TfAllocatorAdapter() override;
 
   port::StatusOr<OwningDeviceMemory> Allocate(int device_ordinal, uint64 size,
@@ -53,27 +47,22 @@ class TfAllocatorAdapter : public DeviceMemoryAllocator {
   // (This attribute has no effect on CPU.)
   bool AllowsAsynchronousDeallocation() const override { return true; }
 
-  Stream *GetStream() const override { return stream_; }
-
  private:
   tensorflow::Allocator *wrapped_;
-  Stream *stream_;
 };
 
-// Adapter class that wraps per-device TF allocators with corresponding streams
-// as a TfAllocatorAdapter. Assumes that the Tensorflow allocator permits
-// asynchronous deallocation; see comment on `AllowsAsynchronousDeallocation()`.
+// Adapter class that wraps per-device TF allocators as an XLA allocator.
+// Assumes that the Tensorflow allocator permits asynchronous deallocation;
+// see comment on `AllowsAsynchronousDeallocation()`.
 class MultiDeviceAdapter : public DeviceMemoryAllocator {
  public:
-  using AllocatorWithStream =
-      std::pair<std::unique_ptr<tensorflow::Allocator>, Stream *>;
-  MultiDeviceAdapter(const Platform *platform,
-                     std::vector<AllocatorWithStream> tf_allocators)
-      : DeviceMemoryAllocator(platform) {
-    tf_allocators_.reserve(tf_allocators.size());
-    for (AllocatorWithStream &p : tf_allocators) {
-      per_device_allocators_.emplace_back(p.first.get(), p.second);
-      tf_allocators_.push_back(std::move(p.first));
+  MultiDeviceAdapter(
+      const Platform *platform,
+      std::vector<std::unique_ptr<tensorflow::Allocator>> tf_allocators)
+      : DeviceMemoryAllocator(platform),
+        tf_allocators_(std::move(tf_allocators)) {
+    for (const auto &tf_allocator : tf_allocators_) {
+      per_device_allocators_.emplace_back(platform, tf_allocator.get());
     }
   }
 
@@ -101,8 +90,8 @@ class MultiDeviceAdapter : public DeviceMemoryAllocator {
 
  private:
   std::vector<TfAllocatorAdapter> per_device_allocators_;
-  // The wrapped TF allocators backing per_device_allocators_
-  // (TfAllocatorAdapter does not take ownership of its underlying Allocator).
+  // The wrapped TF allocators backing per_device_allocators_ (XlaAllocator does
+  // not take ownership of its underlying Allocator).
   std::vector<std::unique_ptr<tensorflow::Allocator>> tf_allocators_;
 };
 

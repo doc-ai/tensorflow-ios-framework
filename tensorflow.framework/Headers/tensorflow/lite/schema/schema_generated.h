@@ -118,9 +118,6 @@ struct SkipGramOptionsT;
 struct SpaceToDepthOptions;
 struct SpaceToDepthOptionsT;
 
-struct DepthToSpaceOptions;
-struct DepthToSpaceOptionsT;
-
 struct SubOptions;
 struct SubOptionsT;
 
@@ -474,7 +471,6 @@ enum BuiltinOperator {
   BuiltinOperator_CONCATENATION = 2,
   BuiltinOperator_CONV_2D = 3,
   BuiltinOperator_DEPTHWISE_CONV_2D = 4,
-  BuiltinOperator_DEPTH_TO_SPACE = 5,
   BuiltinOperator_DEQUANTIZE = 6,
   BuiltinOperator_EMBEDDING_LOOKUP = 7,
   BuiltinOperator_FLOOR = 8,
@@ -593,14 +589,13 @@ enum BuiltinOperator {
   BuiltinOperator_MAX = BuiltinOperator_WHILE
 };
 
-inline const BuiltinOperator (&EnumValuesBuiltinOperator())[120] {
+inline const BuiltinOperator (&EnumValuesBuiltinOperator())[119] {
   static const BuiltinOperator values[] = {
     BuiltinOperator_ADD,
     BuiltinOperator_AVERAGE_POOL_2D,
     BuiltinOperator_CONCATENATION,
     BuiltinOperator_CONV_2D,
     BuiltinOperator_DEPTHWISE_CONV_2D,
-    BuiltinOperator_DEPTH_TO_SPACE,
     BuiltinOperator_DEQUANTIZE,
     BuiltinOperator_EMBEDDING_LOOKUP,
     BuiltinOperator_FLOOR,
@@ -726,7 +721,7 @@ inline const char * const *EnumNamesBuiltinOperator() {
     "CONCATENATION",
     "CONV_2D",
     "DEPTHWISE_CONV_2D",
-    "DEPTH_TO_SPACE",
+    "",
     "DEQUANTIZE",
     "EMBEDDING_LOOKUP",
     "FLOOR",
@@ -947,12 +942,11 @@ enum BuiltinOptions {
   BuiltinOptions_HardSwishOptions = 91,
   BuiltinOptions_IfOptions = 92,
   BuiltinOptions_WhileOptions = 93,
-  BuiltinOptions_DepthToSpaceOptions = 94,
   BuiltinOptions_MIN = BuiltinOptions_NONE,
-  BuiltinOptions_MAX = BuiltinOptions_DepthToSpaceOptions
+  BuiltinOptions_MAX = BuiltinOptions_WhileOptions
 };
 
-inline const BuiltinOptions (&EnumValuesBuiltinOptions())[95] {
+inline const BuiltinOptions (&EnumValuesBuiltinOptions())[94] {
   static const BuiltinOptions values[] = {
     BuiltinOptions_NONE,
     BuiltinOptions_Conv2DOptions,
@@ -1047,8 +1041,7 @@ inline const BuiltinOptions (&EnumValuesBuiltinOptions())[95] {
     BuiltinOptions_MatrixSetDiagOptions,
     BuiltinOptions_HardSwishOptions,
     BuiltinOptions_IfOptions,
-    BuiltinOptions_WhileOptions,
-    BuiltinOptions_DepthToSpaceOptions
+    BuiltinOptions_WhileOptions
   };
   return values;
 }
@@ -1149,14 +1142,13 @@ inline const char * const *EnumNamesBuiltinOptions() {
     "HardSwishOptions",
     "IfOptions",
     "WhileOptions",
-    "DepthToSpaceOptions",
     nullptr
   };
   return names;
 }
 
 inline const char *EnumNameBuiltinOptions(BuiltinOptions e) {
-  if (e < BuiltinOptions_NONE || e > BuiltinOptions_DepthToSpaceOptions) return "";
+  if (e < BuiltinOptions_NONE || e > BuiltinOptions_WhileOptions) return "";
   const size_t index = static_cast<size_t>(e);
   return EnumNamesBuiltinOptions()[index];
 }
@@ -1535,10 +1527,6 @@ template<> struct BuiltinOptionsTraits<IfOptions> {
 
 template<> struct BuiltinOptionsTraits<WhileOptions> {
   static const BuiltinOptions enum_value = BuiltinOptions_WhileOptions;
-};
-
-template<> struct BuiltinOptionsTraits<DepthToSpaceOptions> {
-  static const BuiltinOptions enum_value = BuiltinOptions_DepthToSpaceOptions;
 };
 
 struct BuiltinOptionsUnion {
@@ -2316,14 +2304,6 @@ struct BuiltinOptionsUnion {
   const WhileOptionsT *AsWhileOptions() const {
     return type == BuiltinOptions_WhileOptions ?
       reinterpret_cast<const WhileOptionsT *>(value) : nullptr;
-  }
-  DepthToSpaceOptionsT *AsDepthToSpaceOptions() {
-    return type == BuiltinOptions_DepthToSpaceOptions ?
-      reinterpret_cast<DepthToSpaceOptionsT *>(value) : nullptr;
-  }
-  const DepthToSpaceOptionsT *AsDepthToSpaceOptions() const {
-    return type == BuiltinOptions_DepthToSpaceOptions ?
-      reinterpret_cast<const DepthToSpaceOptionsT *>(value) : nullptr;
   }
 };
 
@@ -4950,60 +4930,6 @@ inline flatbuffers::Offset<SpaceToDepthOptions> CreateSpaceToDepthOptions(
 }
 
 flatbuffers::Offset<SpaceToDepthOptions> CreateSpaceToDepthOptions(flatbuffers::FlatBufferBuilder &_fbb, const SpaceToDepthOptionsT *_o, const flatbuffers::rehasher_function_t *_rehasher = nullptr);
-
-struct DepthToSpaceOptionsT : public flatbuffers::NativeTable {
-  typedef DepthToSpaceOptions TableType;
-  int32_t block_size;
-  DepthToSpaceOptionsT()
-      : block_size(0) {
-  }
-};
-
-struct DepthToSpaceOptions FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef DepthToSpaceOptionsT NativeTableType;
-  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_BLOCK_SIZE = 4
-  };
-  int32_t block_size() const {
-    return GetField<int32_t>(VT_BLOCK_SIZE, 0);
-  }
-  bool Verify(flatbuffers::Verifier &verifier) const {
-    return VerifyTableStart(verifier) &&
-           VerifyField<int32_t>(verifier, VT_BLOCK_SIZE) &&
-           verifier.EndTable();
-  }
-  DepthToSpaceOptionsT *UnPack(const flatbuffers::resolver_function_t *_resolver = nullptr) const;
-  void UnPackTo(DepthToSpaceOptionsT *_o, const flatbuffers::resolver_function_t *_resolver = nullptr) const;
-  static flatbuffers::Offset<DepthToSpaceOptions> Pack(flatbuffers::FlatBufferBuilder &_fbb, const DepthToSpaceOptionsT* _o, const flatbuffers::rehasher_function_t *_rehasher = nullptr);
-};
-
-struct DepthToSpaceOptionsBuilder {
-  flatbuffers::FlatBufferBuilder &fbb_;
-  flatbuffers::uoffset_t start_;
-  void add_block_size(int32_t block_size) {
-    fbb_.AddElement<int32_t>(DepthToSpaceOptions::VT_BLOCK_SIZE, block_size, 0);
-  }
-  explicit DepthToSpaceOptionsBuilder(flatbuffers::FlatBufferBuilder &_fbb)
-        : fbb_(_fbb) {
-    start_ = fbb_.StartTable();
-  }
-  DepthToSpaceOptionsBuilder &operator=(const DepthToSpaceOptionsBuilder &);
-  flatbuffers::Offset<DepthToSpaceOptions> Finish() {
-    const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<DepthToSpaceOptions>(end);
-    return o;
-  }
-};
-
-inline flatbuffers::Offset<DepthToSpaceOptions> CreateDepthToSpaceOptions(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    int32_t block_size = 0) {
-  DepthToSpaceOptionsBuilder builder_(_fbb);
-  builder_.add_block_size(block_size);
-  return builder_.Finish();
-}
-
-flatbuffers::Offset<DepthToSpaceOptions> CreateDepthToSpaceOptions(flatbuffers::FlatBufferBuilder &_fbb, const DepthToSpaceOptionsT *_o, const flatbuffers::rehasher_function_t *_rehasher = nullptr);
 
 struct SubOptionsT : public flatbuffers::NativeTable {
   typedef SubOptions TableType;
@@ -8519,9 +8445,6 @@ struct Operator FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const WhileOptions *builtin_options_as_WhileOptions() const {
     return builtin_options_type() == BuiltinOptions_WhileOptions ? static_cast<const WhileOptions *>(builtin_options()) : nullptr;
   }
-  const DepthToSpaceOptions *builtin_options_as_DepthToSpaceOptions() const {
-    return builtin_options_type() == BuiltinOptions_DepthToSpaceOptions ? static_cast<const DepthToSpaceOptions *>(builtin_options()) : nullptr;
-  }
   const flatbuffers::Vector<uint8_t> *custom_options() const {
     return GetPointer<const flatbuffers::Vector<uint8_t> *>(VT_CUSTOM_OPTIONS);
   }
@@ -8928,10 +8851,6 @@ template<> inline const IfOptions *Operator::builtin_options_as<IfOptions>() con
 
 template<> inline const WhileOptions *Operator::builtin_options_as<WhileOptions>() const {
   return builtin_options_as_WhileOptions();
-}
-
-template<> inline const DepthToSpaceOptions *Operator::builtin_options_as<DepthToSpaceOptions>() const {
-  return builtin_options_as_DepthToSpaceOptions();
 }
 
 struct OperatorBuilder {
@@ -10421,32 +10340,6 @@ inline flatbuffers::Offset<SpaceToDepthOptions> CreateSpaceToDepthOptions(flatbu
   struct _VectorArgs { flatbuffers::FlatBufferBuilder *__fbb; const SpaceToDepthOptionsT* __o; const flatbuffers::rehasher_function_t *__rehasher; } _va = { &_fbb, _o, _rehasher}; (void)_va;
   auto _block_size = _o->block_size;
   return tflite::CreateSpaceToDepthOptions(
-      _fbb,
-      _block_size);
-}
-
-inline DepthToSpaceOptionsT *DepthToSpaceOptions::UnPack(const flatbuffers::resolver_function_t *_resolver) const {
-  auto _o = new DepthToSpaceOptionsT();
-  UnPackTo(_o, _resolver);
-  return _o;
-}
-
-inline void DepthToSpaceOptions::UnPackTo(DepthToSpaceOptionsT *_o, const flatbuffers::resolver_function_t *_resolver) const {
-  (void)_o;
-  (void)_resolver;
-  { auto _e = block_size(); _o->block_size = _e; };
-}
-
-inline flatbuffers::Offset<DepthToSpaceOptions> DepthToSpaceOptions::Pack(flatbuffers::FlatBufferBuilder &_fbb, const DepthToSpaceOptionsT* _o, const flatbuffers::rehasher_function_t *_rehasher) {
-  return CreateDepthToSpaceOptions(_fbb, _o, _rehasher);
-}
-
-inline flatbuffers::Offset<DepthToSpaceOptions> CreateDepthToSpaceOptions(flatbuffers::FlatBufferBuilder &_fbb, const DepthToSpaceOptionsT *_o, const flatbuffers::rehasher_function_t *_rehasher) {
-  (void)_rehasher;
-  (void)_o;
-  struct _VectorArgs { flatbuffers::FlatBufferBuilder *__fbb; const DepthToSpaceOptionsT* __o; const flatbuffers::rehasher_function_t *__rehasher; } _va = { &_fbb, _o, _rehasher}; (void)_va;
-  auto _block_size = _o->block_size;
-  return tflite::CreateDepthToSpaceOptions(
       _fbb,
       _block_size);
 }
@@ -12708,10 +12601,6 @@ inline bool VerifyBuiltinOptions(flatbuffers::Verifier &verifier, const void *ob
       auto ptr = reinterpret_cast<const WhileOptions *>(obj);
       return verifier.VerifyTable(ptr);
     }
-    case BuiltinOptions_DepthToSpaceOptions: {
-      auto ptr = reinterpret_cast<const DepthToSpaceOptions *>(obj);
-      return verifier.VerifyTable(ptr);
-    }
     default: return false;
   }
 }
@@ -13102,10 +12991,6 @@ inline void *BuiltinOptionsUnion::UnPack(const void *obj, BuiltinOptions type, c
       auto ptr = reinterpret_cast<const WhileOptions *>(obj);
       return ptr->UnPack(resolver);
     }
-    case BuiltinOptions_DepthToSpaceOptions: {
-      auto ptr = reinterpret_cast<const DepthToSpaceOptions *>(obj);
-      return ptr->UnPack(resolver);
-    }
     default: return nullptr;
   }
 }
@@ -13484,10 +13369,6 @@ inline flatbuffers::Offset<void> BuiltinOptionsUnion::Pack(flatbuffers::FlatBuff
       auto ptr = reinterpret_cast<const WhileOptionsT *>(value);
       return CreateWhileOptions(_fbb, ptr, _rehasher).Union();
     }
-    case BuiltinOptions_DepthToSpaceOptions: {
-      auto ptr = reinterpret_cast<const DepthToSpaceOptionsT *>(value);
-      return CreateDepthToSpaceOptions(_fbb, ptr, _rehasher).Union();
-    }
     default: return 0;
   }
 }
@@ -13864,10 +13745,6 @@ inline BuiltinOptionsUnion::BuiltinOptionsUnion(const BuiltinOptionsUnion &u) FL
     }
     case BuiltinOptions_WhileOptions: {
       value = new WhileOptionsT(*reinterpret_cast<WhileOptionsT *>(u.value));
-      break;
-    }
-    case BuiltinOptions_DepthToSpaceOptions: {
-      value = new DepthToSpaceOptionsT(*reinterpret_cast<DepthToSpaceOptionsT *>(u.value));
       break;
     }
     default:
@@ -14339,11 +14216,6 @@ inline void BuiltinOptionsUnion::Reset() {
     }
     case BuiltinOptions_WhileOptions: {
       auto ptr = reinterpret_cast<WhileOptionsT *>(value);
-      delete ptr;
-      break;
-    }
-    case BuiltinOptions_DepthToSpaceOptions: {
-      auto ptr = reinterpret_cast<DepthToSpaceOptionsT *>(value);
       delete ptr;
       break;
     }

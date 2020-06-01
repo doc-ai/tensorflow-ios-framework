@@ -33,8 +33,6 @@ class AutoMixedPrecision : public GraphOptimizer {
 
   string name() const override { return "auto_mixed_precision"; };
 
-  bool UsesFunctionLibrary() const override { return false; }
-
   Status Optimize(Cluster* cluster, const GrapplerItem& item,
                   GraphDef* output) override;
 

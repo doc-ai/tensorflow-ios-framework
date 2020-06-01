@@ -621,9 +621,6 @@ class OpKernelContext {
     // The step being executed.
     int64 step_id = 0;
 
-    // True if the op is created by eager runtime.
-    bool is_eager = false;
-
     // The op kernel being computed.
     OpKernel* op_kernel = nullptr;
 
@@ -740,8 +737,6 @@ class OpKernelContext {
   Env* env() const { return params_->device->env(); }
 
   int64 step_id() const { return params_->step_id; }
-
-  bool is_eager() const { return params_->is_eager; }
 
   const OpKernel& op_kernel() const { return *params_->op_kernel; }
 
@@ -1411,8 +1406,7 @@ Status CreateOpKernel(DeviceType device_type, DeviceBase* device,
 //           * def has all attrs specified (e.g. using AddDefaultsToNodeDef()).
 Status SupportedDeviceTypesForNode(
     const std::vector<DeviceType>& prioritized_types, const NodeDef& def,
-    PrioritizedDeviceTypeVector* device_types,
-    const DeviceNameUtils::ParsedName* local_address_spec = nullptr);
+    PrioritizedDeviceTypeVector* device_types);
 
 // Returns a message with a description of the kernels registered for op
 // `op_name`.

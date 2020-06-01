@@ -163,8 +163,6 @@ class RenamedDevice : public Device {
     }
   }
 
-  bool IsLocal() const override { return underlying_device_->IsLocal(); }
-
  private:
   RenamedDevice(Device* underlying, const DeviceAttributes& attributes,
                 bool owns_underlying, bool isolate_session_state,

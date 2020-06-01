@@ -83,7 +83,6 @@ struct default_packet_traits
     HasPolygamma = 0,
     HasErf = 0,
     HasErfc = 0,
-    HasNdtri = 0,
     HasI0e = 0,
     HasI1e = 0,
     HasIGamma = 0,
@@ -258,30 +257,10 @@ pldexp(const Packet &a, const Packet &exponent) { return std::ldexp(a,exponent);
 template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
 pzero(const Packet& a) { return pxor(a,a); }
 
-template<> EIGEN_DEVICE_FUNC inline float pzero<float>(const float& a) {
-  EIGEN_UNUSED_VARIABLE(a);
-  return 0.;
-}
-
-template<> EIGEN_DEVICE_FUNC inline double pzero<double>(const double& a) {
-  EIGEN_UNUSED_VARIABLE(a);
-  return 0.;
-}
-
 /** \internal \returns bits of \a or \b according to the input bit mask \a mask */
 template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
 pselect(const Packet& mask, const Packet& a, const Packet& b) {
   return por(pand(a,mask),pandnot(b,mask));
-}
-
-template<> EIGEN_DEVICE_FUNC inline float pselect<float>(
-    const float& mask, const float& a, const float&b) {
-  return numext::equal_strict(mask,0.f) ? b : a;
-}
-
-template<> EIGEN_DEVICE_FUNC inline double pselect<double>(
-    const double& mask, const double& a, const double& b) {
-  return numext::equal_strict(mask,0.) ? b : a;
 }
 
 /** \internal \returns a <= b as a bit mask */
@@ -542,7 +521,7 @@ Packet pexpm1(const Packet& a) { return numext::expm1(a); }
 
 /** \internal \returns the log of \a a (coeff-wise) */
 template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-Packet plog(const Packet& a) { EIGEN_USING_STD(log); return log(a); }
+Packet plog(const Packet& a) { using std::log; return log(a); }
 
 /** \internal \returns the log1p of \a a (coeff-wise) */
 template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
@@ -554,7 +533,7 @@ Packet plog10(const Packet& a) { using std::log10; return log10(a); }
 
 /** \internal \returns the square-root of \a a (coeff-wise) */
 template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-Packet psqrt(const Packet& a) { EIGEN_USING_STD(sqrt); return sqrt(a); }
+Packet psqrt(const Packet& a) { using std::sqrt; return sqrt(a); }
 
 /** \internal \returns the reciprocal square-root of \a a (coeff-wise) */
 template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS

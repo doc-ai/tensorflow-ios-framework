@@ -501,8 +501,7 @@ namespace std_fallback {
     }
 
     EIGEN_USING_STD_MATH(log);
-    Scalar logu = log(u);
-    return numext::equal_strict(u, logu) ? u : (u - RealScalar(1)) * x / logu;
+    return (u - RealScalar(1)) * x / log(u);
   }
 }
 
@@ -513,22 +512,12 @@ struct expm1_impl {
     EIGEN_STATIC_ASSERT_NON_INTEGER(Scalar)
     #if EIGEN_HAS_CXX11_MATH
     using std::expm1;
-    #else
-    using std_fallback::expm1;
     #endif
+    using std_fallback::expm1;
     return expm1(x);
   }
 };
 
-// Specialization for complex types that are not supported by std::expm1.
-template <typename RealScalar>
-struct expm1_impl<std::complex<RealScalar> > {
-  EIGEN_DEVICE_FUNC static inline std::complex<RealScalar> run(
-      const std::complex<RealScalar>& x) {
-    EIGEN_STATIC_ASSERT_NON_INTEGER(RealScalar)
-    return std_fallback::expm1(x);
-  }
-};
 
 template<typename Scalar>
 struct expm1_retval
@@ -549,10 +538,7 @@ namespace std_fallback {
     typedef typename NumTraits<Scalar>::Real RealScalar;
     EIGEN_USING_STD_MATH(log);
     Scalar x1p = RealScalar(1) + x;
-    Scalar log_1p = log(x1p);
-    const bool is_small = numext::equal_strict(x1p, Scalar(1));
-    const bool is_inf = numext::equal_strict(x1p, log_1p);
-    return (is_small || is_inf) ? x : x * (log_1p / (x1p - RealScalar(1)));
+    return numext::equal_strict(x1p, Scalar(1)) ? x : x * ( log(x1p) / (x1p - RealScalar(1)) );
   }
 }
 
@@ -563,22 +549,12 @@ struct log1p_impl {
     EIGEN_STATIC_ASSERT_NON_INTEGER(Scalar)
     #if EIGEN_HAS_CXX11_MATH
     using std::log1p;
-    #else
-    using std_fallback::log1p;
     #endif
+    using std_fallback::log1p;
     return log1p(x);
   }
 };
 
-// Specialization for complex types that are not supported by std::log1p.
-template <typename RealScalar>
-struct log1p_impl<std::complex<RealScalar> > {
-  EIGEN_DEVICE_FUNC static inline std::complex<RealScalar> run(
-      const std::complex<RealScalar>& x) {
-    EIGEN_STATIC_ASSERT_NON_INTEGER(RealScalar)
-    return std_fallback::log1p(x);
-  }
-};
 
 template<typename Scalar>
 struct log1p_retval

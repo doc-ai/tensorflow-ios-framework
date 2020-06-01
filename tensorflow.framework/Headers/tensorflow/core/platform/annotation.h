@@ -68,7 +68,10 @@ class Annotation {
   Annotation(const Annotation&) = delete;  // Unconstructible.
 
   // Returns a reference to the annotation for the current thread.
-  static std::string* ThreadAnnotation();
+  static std::string* ThreadAnnotation() {
+    static thread_local std::string annotation;
+    return &annotation;
+  }
 };
 
 namespace tracing {

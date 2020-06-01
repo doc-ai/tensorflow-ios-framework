@@ -32,8 +32,6 @@ class GenericLayoutOptimizer : public GraphOptimizer {
 
   string name() const override { return "layout"; };
 
-  bool UsesFunctionLibrary() const override { return false; }
-
   Status Optimize(Cluster* cluster, const GrapplerItem& item,
                   GraphDef* output) override;
 

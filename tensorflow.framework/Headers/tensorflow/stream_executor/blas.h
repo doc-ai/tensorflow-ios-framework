@@ -45,7 +45,6 @@ limitations under the License.
 
 #include "tensorflow/stream_executor/host_or_device_scalar.h"
 #include "tensorflow/stream_executor/lib/array_slice.h"
-#include "tensorflow/stream_executor/lib/statusor.h"
 #include "tensorflow/stream_executor/platform/port.h"
 
 namespace Eigen {
@@ -1383,8 +1382,6 @@ class BlasSupport {
                           const DeviceMemory<std::complex<double>> &a, int lda,
                           DeviceMemory<std::complex<double>> *b, int ldb) = 0;
 
-  virtual port::Status GetVersion(string *version) = 0;
-
  protected:
   BlasSupport() {}
 
@@ -2195,8 +2192,7 @@ class BlasSupport {
                   blas::Transpose transa, blas::Diagonal diag, uint64 m,       \
                   uint64 n, std::complex<double> alpha,                        \
                   const DeviceMemory<std::complex<double>> &a, int lda,        \
-                  DeviceMemory<std::complex<double>> *b, int ldb) override;    \
-  port::Status GetVersion(string *version) override;
+                  DeviceMemory<std::complex<double>> *b, int ldb) override;
 
 }  // namespace blas
 }  // namespace stream_executor

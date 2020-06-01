@@ -96,7 +96,7 @@ class ResourceOpKernel : public OpKernel {
       }
 
       if (!has_resource_type_) {
-        auto h = handle_.AccessTensor(context)->template flat<tstring>();
+        auto h = handle_.AccessTensor(context)->template flat<string>();
         h(0) = cinfo_.container();
         h(1) = cinfo_.name();
       }

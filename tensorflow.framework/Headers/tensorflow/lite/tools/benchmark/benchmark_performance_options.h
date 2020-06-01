@@ -75,8 +75,11 @@ class BenchmarkPerformanceOptions {
   virtual std::vector<std::string> GetValidPerfOptions() const;
   bool HasOption(const std::string& option) const;
 
+  virtual void Run();
   virtual void ResetPerformanceOptions();
-  virtual void CreatePerformanceOptions();
+  virtual void BenchmarkCPUOptions();
+  virtual void BenchmarkGPUOptions();
+  virtual void BenchmarkNnapiOptions();
 
   BenchmarkParams params_;
   std::vector<std::string> perf_options_;
@@ -84,10 +87,6 @@ class BenchmarkPerformanceOptions {
   // The object that drives a single-performance-option run.
   BenchmarkModel* const single_option_run_;          // Doesn't own the memory.
   BenchmarkParams* const single_option_run_params_;  // Doesn't own the memory.
-
-  // Each element is a set of performance-affecting benchmark parameters to be
-  // all set for a particular benchmark run.
-  std::vector<BenchmarkParams> all_run_params_;
 
   std::unique_ptr<MultiRunStatsRecorder> all_run_stats_;
 };

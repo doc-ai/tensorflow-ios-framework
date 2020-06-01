@@ -15,6 +15,7 @@ limitations under the License.
 #ifndef TENSORFLOW_LITE_KERNELS_INTERNAL_REFERENCE_COMPARISONS_H_
 #define TENSORFLOW_LITE_KERNELS_INTERNAL_REFERENCE_COMPARISONS_H_
 
+#include "profiling/instrumentation.h"
 #include "tensorflow/lite/kernels/internal/common.h"
 #include "tensorflow/lite/kernels/internal/types.h"
 
@@ -111,6 +112,7 @@ inline void BroadcastComparison4DSlowImpl(
     const RuntimeShape& unextended_input1_shape, const T* input1_data,
     const RuntimeShape& unextended_input2_shape, const T* input2_data,
     const RuntimeShape& unextended_output_shape, bool* output_data) {
+  gemmlowp::ScopedProfilingLabel label("BroadcastComparison4DSlow");
   TFLITE_DCHECK_LE(unextended_input1_shape.DimensionsCount(), 4);
   TFLITE_DCHECK_LE(unextended_input2_shape.DimensionsCount(), 4);
   TFLITE_DCHECK_LE(unextended_output_shape.DimensionsCount(), 4);
@@ -153,6 +155,7 @@ inline void BroadcastComparison4DSlowWithScaling(
     const RuntimeShape& unextended_input1_shape, const T* input1_data,
     const RuntimeShape& unextended_input2_shape, const T* input2_data,
     const RuntimeShape& unextended_output_shape, bool* output_data) {
+  gemmlowp::ScopedProfilingLabel label("BroadcastComparison4DSlowWithScaling");
   TFLITE_DCHECK_LE(unextended_input1_shape.DimensionsCount(), 4);
   TFLITE_DCHECK_LE(unextended_input2_shape.DimensionsCount(), 4);
   TFLITE_DCHECK_LE(unextended_output_shape.DimensionsCount(), 4);
@@ -201,6 +204,7 @@ inline void BroadcastComparison4DSlowWithScaling(
                    const RuntimeShape& input1_shape, const float* input1_data, \
                    const RuntimeShape& input2_shape, const float* input2_data, \
                    const RuntimeShape& output_shape, bool* output_data) {      \
+    gemmlowp::ScopedProfilingLabel label(#name);                               \
     Comparison<name##Fn>(op_params, input1_shape, input1_data, input2_shape,   \
                          input2_data, output_shape, output_data);              \
   }                                                                            \
@@ -210,6 +214,7 @@ inline void BroadcastComparison4DSlowWithScaling(
       const T* input1_data, const RuntimeShape& input2_shape,                  \
       const T* input2_data, const RuntimeShape& output_shape,                  \
       bool* output_data) {                                                     \
+    gemmlowp::ScopedProfilingLabel label(#name "NoScaling");                   \
     ComparisonImpl<T, name##Fn>(op_params, input1_shape, input1_data,          \
                                 input2_shape, input2_data, output_shape,       \
                                 output_data);                                  \
@@ -220,6 +225,7 @@ inline void BroadcastComparison4DSlowWithScaling(
       const T* input1_data, const RuntimeShape& input2_shape,                  \
       const T* input2_data, const RuntimeShape& output_shape,                  \
       bool* output_data) {                                                     \
+    gemmlowp::ScopedProfilingLabel label(#name "WithScaling/8bit");            \
     ComparisonWithScaling<T, name##Fn>(op_params, input1_shape, input1_data,   \
                                        input2_shape, input2_data,              \
                                        output_shape, output_data);             \
@@ -230,6 +236,7 @@ inline void BroadcastComparison4DSlowWithScaling(
       const T* input1_data, const RuntimeShape& input2_shape,                  \
       const T* input2_data, const RuntimeShape& output_shape,                  \
       bool* output_data) {                                                     \
+    gemmlowp::ScopedProfilingLabel label("Broadcast4DSlow" #name "NoScaling"); \
     BroadcastComparison4DSlowImpl<T, name##Fn>(                                \
         op_params, input1_shape, input1_data, input2_shape, input2_data,       \
         output_shape, output_data);                                            \
@@ -239,6 +246,7 @@ inline void BroadcastComparison4DSlowWithScaling(
       const float* input1_data, const RuntimeShape& input2_shape,              \
       const float* input2_data, const RuntimeShape& output_shape,              \
       bool* output_data) {                                                     \
+    gemmlowp::ScopedProfilingLabel label("Broadcast4DSlow" #name);             \
     BroadcastComparison4DSlow<name##Fn>(op_params, input1_shape, input1_data,  \
                                         input2_shape, input2_data,             \
                                         output_shape, output_data);            \
@@ -249,6 +257,7 @@ inline void BroadcastComparison4DSlowWithScaling(
       const T* input1_data, const RuntimeShape& input2_shape,                  \
       const T* input2_data, const RuntimeShape& output_shape,                  \
       bool* output_data) {                                                     \
+    gemmlowp::ScopedProfilingLabel label("Broadcast4DSlow" #name "/8bit");     \
     BroadcastComparison4DSlowWithScaling<T, name##Fn>(                         \
         op_params, input1_shape, input1_data, input2_shape, input2_data,       \
         output_shape, output_data);                                            \

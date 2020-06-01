@@ -212,11 +212,11 @@ class XlaAssignVariableOp : public OpKernel {
   REGISTER_KERNEL_BUILDER(Name(FunctionLibraryDefinition::kArgOp)              \
                               .Device(DEVICE)                                  \
                               .HostMemory("output")                            \
-                              .TypeConstraint<tstring>("T"),                   \
+                              .TypeConstraint<string>("T"),                    \
                           ArgOp);                                              \
   REGISTER_KERNEL_BUILDER(Name(FunctionLibraryDefinition::kRetOp)              \
                               .Device(DEVICE)                                  \
-                              .TypeConstraint<tstring>("T")                    \
+                              .TypeConstraint<string>("T")                     \
                               .HostMemory("input"),                            \
                           RetvalOp);
 

@@ -30,9 +30,7 @@ class InjectPrefetch : public TFDataOptimizerBase {
   InjectPrefetch() = default;
   ~InjectPrefetch() override = default;
 
-  string name() const override { return "inject_prefetch"; };
-
-  bool UsesFunctionLibrary() const override { return false; }
+  string name() const override { return "autotune_buffers"; };
 
   Status Init(
       const tensorflow::RewriterConfig_CustomGraphOptimizer* config) override {
