@@ -40,7 +40,7 @@ class TakeDataset : public DatasetBase {
 
   int64 Cardinality() const override;
 
-  Status CheckExternalState() const override;
+  bool IsStateful() const override;
 
  protected:
   Status AsGraphDefInternal(SerializationContext* ctx,

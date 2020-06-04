@@ -42,15 +42,15 @@ class BenchmarkTfLiteModel : public BenchmarkModel {
 
   std::vector<Flag> GetFlags() override;
   void LogParams() override;
-  TfLiteStatus ValidateParams() override;
+  bool ValidateParams() override;
   uint64_t ComputeInputBytes() override;
-  TfLiteStatus Init() override;
-  TfLiteStatus RunImpl() override;
+  void Init() override;
+  void RunImpl() override;
 
  protected:
   static BenchmarkParams DefaultParams();
-  TfLiteStatus PrepareInputData() override;
-  TfLiteStatus ResetInputsAndOutputs() override;
+  void PrepareInputData() override;
+  void ResetInputsAndOutputs() override;
 
   // Allow subclasses to create custom delegates to be applied during init.
   using TfLiteDelegatePtr = tflite::Interpreter::TfLiteDelegatePtr;

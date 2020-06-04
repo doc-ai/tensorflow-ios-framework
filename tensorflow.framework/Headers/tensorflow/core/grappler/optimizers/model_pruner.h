@@ -31,8 +31,6 @@ class ModelPruner : public GraphOptimizer {
 
   string name() const override { return "model_pruner"; };
 
-  bool UsesFunctionLibrary() const override { return false; }
-
   Status Optimize(Cluster* cluster, const GrapplerItem& item,
                   GraphDef* optimized_graph) override;
 

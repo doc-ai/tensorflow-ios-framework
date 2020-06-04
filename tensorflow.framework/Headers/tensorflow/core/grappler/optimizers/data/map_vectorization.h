@@ -47,8 +47,6 @@ class MapVectorization : public TFDataOptimizerBase {
 
   string name() const override { return "map_vectorization"; };
 
-  bool UsesFunctionLibrary() const override { return false; }
-
   Status Init(
       const tensorflow::RewriterConfig_CustomGraphOptimizer* config) override {
     if (!config) return Status::OK();

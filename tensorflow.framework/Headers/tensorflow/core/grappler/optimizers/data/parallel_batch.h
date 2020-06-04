@@ -28,8 +28,6 @@ class ParallelBatch : public TFDataOptimizerBase {
 
   string name() const override { return "parallel_batch"; }
 
-  bool UsesFunctionLibrary() const override { return false; }
-
   Status Init(
       const tensorflow::RewriterConfig_CustomGraphOptimizer* config) override {
     return Status::OK();

@@ -31,8 +31,6 @@ class TFDataMetaOptimizer : public CustomGraphOptimizer {
 
   string name() const override { return "tf_data_meta_optimizer"; };
 
-  bool UsesFunctionLibrary() const override { return true; }
-
   Status Init(
       const tensorflow::RewriterConfig_CustomGraphOptimizer* config) override;
 

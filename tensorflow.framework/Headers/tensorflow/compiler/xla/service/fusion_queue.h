@@ -15,10 +15,8 @@ limitations under the License.
 #ifndef TENSORFLOW_COMPILER_XLA_SERVICE_FUSION_QUEUE_H_
 #define TENSORFLOW_COMPILER_XLA_SERVICE_FUSION_QUEUE_H_
 
-#include <string>
-#include <vector>
+#include <utility>
 
-#include "absl/strings/str_cat.h"
 #include "tensorflow/compiler/xla/service/hlo_instruction.h"
 
 namespace xla {
@@ -27,11 +25,15 @@ namespace xla {
 using FusionConfig = std::vector<std::vector<bool>>;
 
 // Converts fusion config to string format.
-static std::string FusionConfigToString(const FusionConfig& config) {
-  std::string s;
-  for (const auto& edge_list : config) {
-    for (bool edge : edge_list) {
-      absl::StrAppend(&s, edge ? "1" : "0");
+static string FusionConfigToString(const FusionConfig& config) {
+  string s = "";
+  for (auto& edge_list : config) {
+    for (auto edge : edge_list) {
+      if (edge) {
+        s += "1";
+      } else {
+        s += "0";
+      }
     }
   }
   return s;

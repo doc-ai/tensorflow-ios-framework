@@ -16,6 +16,7 @@ limitations under the License.
 #define TENSORFLOW_LITE_EXPERIMENTAL_C_C_API_INTERNAL_H_
 
 #include "tensorflow/lite/experimental/c/c_api.h"
+
 #include "tensorflow/lite/interpreter.h"
 #include "tensorflow/lite/model.h"
 #include "tensorflow/lite/op_resolver.h"
@@ -26,12 +27,12 @@ limitations under the License.
 // NOTE: This header does not follow C conventions and does not define a C API.
 // It is effectively an (internal) implementation detail of the C API.
 
-struct TfLiteModel {
+struct TFL_Model {
   // Sharing is safe as FlatBufferModel is const.
   std::shared_ptr<const tflite::FlatBufferModel> impl;
 };
 
-struct TfLiteInterpreterOptions {
+struct TFL_InterpreterOptions {
   enum {
     kDefaultNumThreads = -1,
   };
@@ -46,9 +47,9 @@ struct TfLiteInterpreterOptions {
   std::vector<TfLiteDelegate*> delegates;
 };
 
-struct TfLiteInterpreter {
+struct TFL_Interpreter {
   // Taking a reference to the (const) model data avoids lifetime-related issues
-  // and complexity with the TfLiteModel's existence.
+  // and complexity with the TFL_Model's existence.
   std::shared_ptr<const tflite::FlatBufferModel> model;
 
   // The interpreter does not take ownership of the provided ErrorReporter

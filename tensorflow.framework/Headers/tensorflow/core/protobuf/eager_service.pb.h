@@ -58,7 +58,7 @@ struct TableStruct_tensorflow_2fcore_2fprotobuf_2feager_5fservice_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[20]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[19]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -112,9 +112,6 @@ extern RegisterFunctionResponseDefaultTypeInternal _RegisterFunctionResponse_def
 class RemoteTensorHandle;
 class RemoteTensorHandleDefaultTypeInternal;
 extern RemoteTensorHandleDefaultTypeInternal _RemoteTensorHandle_default_instance_;
-class SendTensorOp;
-class SendTensorOpDefaultTypeInternal;
-extern SendTensorOpDefaultTypeInternal _SendTensorOp_default_instance_;
 class SendTensorRequest;
 class SendTensorRequestDefaultTypeInternal;
 extern SendTensorRequestDefaultTypeInternal _SendTensorRequest_default_instance_;
@@ -145,7 +142,6 @@ template<> ::tensorflow::eager::QueueResponse* Arena::CreateMaybeMessage<::tenso
 template<> ::tensorflow::eager::RegisterFunctionRequest* Arena::CreateMaybeMessage<::tensorflow::eager::RegisterFunctionRequest>(Arena*);
 template<> ::tensorflow::eager::RegisterFunctionResponse* Arena::CreateMaybeMessage<::tensorflow::eager::RegisterFunctionResponse>(Arena*);
 template<> ::tensorflow::eager::RemoteTensorHandle* Arena::CreateMaybeMessage<::tensorflow::eager::RemoteTensorHandle>(Arena*);
-template<> ::tensorflow::eager::SendTensorOp* Arena::CreateMaybeMessage<::tensorflow::eager::SendTensorOp>(Arena*);
 template<> ::tensorflow::eager::SendTensorRequest* Arena::CreateMaybeMessage<::tensorflow::eager::SendTensorRequest>(Arena*);
 template<> ::tensorflow::eager::SendTensorResponse* Arena::CreateMaybeMessage<::tensorflow::eager::SendTensorResponse>(Arena*);
 template<> ::tensorflow::eager::WaitQueueDoneRequest* Arena::CreateMaybeMessage<::tensorflow::eager::WaitQueueDoneRequest>(Arena*);
@@ -588,7 +584,6 @@ class QueueItem :
   enum ItemCase {
     kHandleToDecref = 1,
     kOperation = 2,
-    kSendTensor = 3,
     ITEM_NOT_SET = 0,
   };
 
@@ -683,15 +678,6 @@ class QueueItem :
   ::tensorflow::eager::Operation* mutable_operation();
   void set_allocated_operation(::tensorflow::eager::Operation* operation);
 
-  // .tensorflow.eager.SendTensorOp send_tensor = 3;
-  bool has_send_tensor() const;
-  void clear_send_tensor();
-  static const int kSendTensorFieldNumber = 3;
-  const ::tensorflow::eager::SendTensorOp& send_tensor() const;
-  ::tensorflow::eager::SendTensorOp* release_send_tensor();
-  ::tensorflow::eager::SendTensorOp* mutable_send_tensor();
-  void set_allocated_send_tensor(::tensorflow::eager::SendTensorOp* send_tensor);
-
   void clear_item();
   ItemCase item_case() const;
   // @@protoc_insertion_point(class_scope:tensorflow.eager.QueueItem)
@@ -699,7 +685,6 @@ class QueueItem :
   class HasBitSetters;
   void set_has_handle_to_decref();
   void set_has_operation();
-  void set_has_send_tensor();
 
   inline bool has_item() const;
   inline void clear_has_item();
@@ -709,7 +694,6 @@ class QueueItem :
     ItemUnion() {}
     ::tensorflow::eager::RemoteTensorHandle* handle_to_decref_;
     ::tensorflow::eager::Operation* operation_;
-    ::tensorflow::eager::SendTensorOp* send_tensor_;
   } item_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   ::PROTOBUF_NAMESPACE_ID::uint32 _oneof_case_[1];
@@ -2430,158 +2414,6 @@ class RegisterFunctionResponse :
 };
 // -------------------------------------------------------------------
 
-class SendTensorOp :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:tensorflow.eager.SendTensorOp) */ {
- public:
-  SendTensorOp();
-  virtual ~SendTensorOp();
-
-  SendTensorOp(const SendTensorOp& from);
-  SendTensorOp(SendTensorOp&& from) noexcept
-    : SendTensorOp() {
-    *this = ::std::move(from);
-  }
-
-  inline SendTensorOp& operator=(const SendTensorOp& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline SendTensorOp& operator=(SendTensorOp&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return GetMetadataStatic().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return GetMetadataStatic().reflection;
-  }
-  static const SendTensorOp& default_instance();
-
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const SendTensorOp* internal_default_instance() {
-    return reinterpret_cast<const SendTensorOp*>(
-               &_SendTensorOp_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    17;
-
-  void Swap(SendTensorOp* other);
-  friend void swap(SendTensorOp& a, SendTensorOp& b) {
-    a.Swap(&b);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline SendTensorOp* New() const final {
-    return CreateMaybeMessage<SendTensorOp>(nullptr);
-  }
-
-  SendTensorOp* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<SendTensorOp>(arena);
-  }
-  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const SendTensorOp& from);
-  void MergeFrom(const SendTensorOp& from);
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  #else
-  bool MergePartialFromCodedStream(
-      ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) final;
-  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  void SerializeWithCachedSizes(
-      ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* InternalSerializeWithCachedSizesToArray(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  inline void SharedCtor();
-  inline void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(SendTensorOp* other);
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "tensorflow.eager.SendTensorOp";
-  }
-  private:
-  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
-    return nullptr;
-  }
-  inline void* MaybeArenaPtr() const {
-    return nullptr;
-  }
-  public:
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-  private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
-    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_tensorflow_2fcore_2fprotobuf_2feager_5fservice_2eproto);
-    return ::descriptor_table_tensorflow_2fcore_2fprotobuf_2feager_5fservice_2eproto.file_level_metadata[kIndexInFileMessages];
-  }
-
-  public:
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // repeated .tensorflow.TensorProto tensors = 2;
-  int tensors_size() const;
-  void clear_tensors();
-  static const int kTensorsFieldNumber = 2;
-  ::tensorflow::TensorProto* mutable_tensors(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::tensorflow::TensorProto >*
-      mutable_tensors();
-  const ::tensorflow::TensorProto& tensors(int index) const;
-  ::tensorflow::TensorProto* add_tensors();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::tensorflow::TensorProto >&
-      tensors() const;
-
-  // string device_name = 3;
-  void clear_device_name();
-  static const int kDeviceNameFieldNumber = 3;
-  const std::string& device_name() const;
-  void set_device_name(const std::string& value);
-  void set_device_name(std::string&& value);
-  void set_device_name(const char* value);
-  void set_device_name(const char* value, size_t size);
-  std::string* mutable_device_name();
-  std::string* release_device_name();
-  void set_allocated_device_name(std::string* device_name);
-
-  // int64 op_id = 1;
-  void clear_op_id();
-  static const int kOpIdFieldNumber = 1;
-  ::PROTOBUF_NAMESPACE_ID::int64 op_id() const;
-  void set_op_id(::PROTOBUF_NAMESPACE_ID::int64 value);
-
-  // @@protoc_insertion_point(class_scope:tensorflow.eager.SendTensorOp)
- private:
-  class HasBitSetters;
-
-  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::tensorflow::TensorProto > tensors_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr device_name_;
-  ::PROTOBUF_NAMESPACE_ID::int64 op_id_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_tensorflow_2fcore_2fprotobuf_2feager_5fservice_2eproto;
-};
-// -------------------------------------------------------------------
-
 class SendTensorRequest :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:tensorflow.eager.SendTensorRequest) */ {
  public:
@@ -2624,7 +2456,7 @@ class SendTensorRequest :
                &_SendTensorRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    17;
 
   void Swap(SendTensorRequest* other);
   friend void swap(SendTensorRequest& a, SendTensorRequest& b) {
@@ -2783,7 +2615,7 @@ class SendTensorResponse :
                &_SendTensorResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    18;
 
   void Swap(SendTensorResponse* other);
   friend void swap(SendTensorResponse& a, SendTensorResponse& b) {
@@ -3296,47 +3128,6 @@ inline ::tensorflow::eager::Operation* QueueItem::mutable_operation() {
   return item_.operation_;
 }
 
-// .tensorflow.eager.SendTensorOp send_tensor = 3;
-inline bool QueueItem::has_send_tensor() const {
-  return item_case() == kSendTensor;
-}
-inline void QueueItem::set_has_send_tensor() {
-  _oneof_case_[0] = kSendTensor;
-}
-inline void QueueItem::clear_send_tensor() {
-  if (has_send_tensor()) {
-    delete item_.send_tensor_;
-    clear_has_item();
-  }
-}
-inline ::tensorflow::eager::SendTensorOp* QueueItem::release_send_tensor() {
-  // @@protoc_insertion_point(field_release:tensorflow.eager.QueueItem.send_tensor)
-  if (has_send_tensor()) {
-    clear_has_item();
-      ::tensorflow::eager::SendTensorOp* temp = item_.send_tensor_;
-    item_.send_tensor_ = nullptr;
-    return temp;
-  } else {
-    return nullptr;
-  }
-}
-inline const ::tensorflow::eager::SendTensorOp& QueueItem::send_tensor() const {
-  // @@protoc_insertion_point(field_get:tensorflow.eager.QueueItem.send_tensor)
-  return has_send_tensor()
-      ? *item_.send_tensor_
-      : *reinterpret_cast< ::tensorflow::eager::SendTensorOp*>(&::tensorflow::eager::_SendTensorOp_default_instance_);
-}
-inline ::tensorflow::eager::SendTensorOp* QueueItem::mutable_send_tensor() {
-  if (!has_send_tensor()) {
-    clear_item();
-    set_has_send_tensor();
-    item_.send_tensor_ = CreateMaybeMessage< ::tensorflow::eager::SendTensorOp >(
-        GetArenaNoVirtual());
-  }
-  // @@protoc_insertion_point(field_mutable:tensorflow.eager.QueueItem.send_tensor)
-  return item_.send_tensor_;
-}
-
 inline bool QueueItem::has_item() const {
   return item_case() != ITEM_NOT_SET;
 }
@@ -3821,102 +3612,6 @@ inline void RegisterFunctionRequest::set_allocated_function_def(::tensorflow::Fu
 
 // -------------------------------------------------------------------
 
-// SendTensorOp
-
-// int64 op_id = 1;
-inline void SendTensorOp::clear_op_id() {
-  op_id_ = PROTOBUF_LONGLONG(0);
-}
-inline ::PROTOBUF_NAMESPACE_ID::int64 SendTensorOp::op_id() const {
-  // @@protoc_insertion_point(field_get:tensorflow.eager.SendTensorOp.op_id)
-  return op_id_;
-}
-inline void SendTensorOp::set_op_id(::PROTOBUF_NAMESPACE_ID::int64 value) {
-  
-  op_id_ = value;
-  // @@protoc_insertion_point(field_set:tensorflow.eager.SendTensorOp.op_id)
-}
-
-// repeated .tensorflow.TensorProto tensors = 2;
-inline int SendTensorOp::tensors_size() const {
-  return tensors_.size();
-}
-inline ::tensorflow::TensorProto* SendTensorOp::mutable_tensors(int index) {
-  // @@protoc_insertion_point(field_mutable:tensorflow.eager.SendTensorOp.tensors)
-  return tensors_.Mutable(index);
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::tensorflow::TensorProto >*
-SendTensorOp::mutable_tensors() {
-  // @@protoc_insertion_point(field_mutable_list:tensorflow.eager.SendTensorOp.tensors)
-  return &tensors_;
-}
-inline const ::tensorflow::TensorProto& SendTensorOp::tensors(int index) const {
-  // @@protoc_insertion_point(field_get:tensorflow.eager.SendTensorOp.tensors)
-  return tensors_.Get(index);
-}
-inline ::tensorflow::TensorProto* SendTensorOp::add_tensors() {
-  // @@protoc_insertion_point(field_add:tensorflow.eager.SendTensorOp.tensors)
-  return tensors_.Add();
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::tensorflow::TensorProto >&
-SendTensorOp::tensors() const {
-  // @@protoc_insertion_point(field_list:tensorflow.eager.SendTensorOp.tensors)
-  return tensors_;
-}
-
-// string device_name = 3;
-inline void SendTensorOp::clear_device_name() {
-  device_name_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline const std::string& SendTensorOp::device_name() const {
-  // @@protoc_insertion_point(field_get:tensorflow.eager.SendTensorOp.device_name)
-  return device_name_.GetNoArena();
-}
-inline void SendTensorOp::set_device_name(const std::string& value) {
-  
-  device_name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:tensorflow.eager.SendTensorOp.device_name)
-}
-inline void SendTensorOp::set_device_name(std::string&& value) {
-  
-  device_name_.SetNoArena(
-    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:tensorflow.eager.SendTensorOp.device_name)
-}
-inline void SendTensorOp::set_device_name(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  
-  device_name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:tensorflow.eager.SendTensorOp.device_name)
-}
-inline void SendTensorOp::set_device_name(const char* value, size_t size) {
-  
-  device_name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:tensorflow.eager.SendTensorOp.device_name)
-}
-inline std::string* SendTensorOp::mutable_device_name() {
-  
-  // @@protoc_insertion_point(field_mutable:tensorflow.eager.SendTensorOp.device_name)
-  return device_name_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline std::string* SendTensorOp::release_device_name() {
-  // @@protoc_insertion_point(field_release:tensorflow.eager.SendTensorOp.device_name)
-  
-  return device_name_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline void SendTensorOp::set_allocated_device_name(std::string* device_name) {
-  if (device_name != nullptr) {
-    
-  } else {
-    
-  }
-  device_name_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), device_name);
-  // @@protoc_insertion_point(field_set_allocated:tensorflow.eager.SendTensorOp.device_name)
-}
-
-// -------------------------------------------------------------------
-
 // SendTensorRequest
 
 // fixed64 context_id = 1;
@@ -4032,8 +3727,6 @@ inline void SendTensorRequest::set_allocated_device_name(std::string* device_nam
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
-// -------------------------------------------------------------------
-
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

@@ -283,8 +283,27 @@ class Matrix
     }
 #endif
 
-#if EIGEN_HAS_CXX11
-    /** \copydoc PlainObjectBase(const Scalar&, const Scalar&, const Scalar&,  const Scalar&, const ArgTypes&... args)
+    #ifndef EIGEN_PARSED_BY_DOXYGEN
+
+    // This constructor is for both 1x1 matrices and dynamic vectors
+    template<typename T>
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    explicit Matrix(const T& x)
+    {
+      Base::_check_template_params();
+      Base::template _init1<T>(x);
+    }
+
+    template<typename T0, typename T1>
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    Matrix(const T0& x, const T1& y)
+    {
+      Base::_check_template_params();
+      Base::template _init2<T0,T1>(x, y);
+    }
+
+    #if EIGEN_HAS_CXX11
+    /** \copydoc PlainObjectBase(const Scalar&, const Scalar&, const Scalar&,  const Scalar&, const ArgTypes&...)
      *
      * Example: \include Matrix_variadic_ctor_cxx11.cpp
      * Output: \verbinclude Matrix_variadic_ctor_cxx11.out
@@ -315,33 +334,13 @@ class Matrix
       * In the case of fixed-sized matrices, the initializer list sizes must exactly match the matrix sizes,
       * and implicit transposition is allowed for compile-time vectors only.
       * 
-      * \sa Matrix(const Scalar& a0, const Scalar& a1, const Scalar& a2,  const Scalar& a3, const ArgTypes&... args)
+      * \sa Matrix(const Scalar&, const Scalar&, const Scalar&,  const Scalar&, const ArgTypes&...)
       */
-    EIGEN_DEVICE_FUNC
+     EIGEN_DEVICE_FUNC
     explicit EIGEN_STRONG_INLINE Matrix(const std::initializer_list<std::initializer_list<Scalar>>& list) : Base(list) {}
-#endif // end EIGEN_HAS_CXX11
+    #endif // end EIGEN_HAS_CXX11
 
-#ifndef EIGEN_PARSED_BY_DOXYGEN
-
-    // This constructor is for both 1x1 matrices and dynamic vectors
-    template<typename T>
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    explicit Matrix(const T& x)
-    {
-      Base::_check_template_params();
-      Base::template _init1<T>(x);
-    }
-
-    template<typename T0, typename T1>
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    Matrix(const T0& x, const T1& y)
-    {
-      Base::_check_template_params();
-      Base::template _init2<T0,T1>(x, y);
-    }
-
-
-#else
+    #else
     /** \brief Constructs a fixed-sized matrix initialized with coefficients starting at \a data */
     EIGEN_DEVICE_FUNC
     explicit Matrix(const Scalar *data);

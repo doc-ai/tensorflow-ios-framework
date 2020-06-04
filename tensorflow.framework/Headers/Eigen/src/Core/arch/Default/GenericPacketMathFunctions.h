@@ -13,9 +13,6 @@
  * Julien Pommier's sse math library: http://gruntthepeon.free.fr/ssemath/
  */
 
-#ifndef EIGEN_ARCH_GENERIC_PACKET_MATH_FUNCTIONS_H
-#define EIGEN_ARCH_GENERIC_PACKET_MATH_FUNCTIONS_H
-
 namespace Eigen {
 namespace internal {
 
@@ -128,51 +125,6 @@ Packet plog_float(const Packet _x)
   return pselect(iszero_mask, cst_minus_inf,
                               por(pselect(pos_inf_mask,cst_pos_inf,x), invalid_mask));
 }
-
-/** \internal \returns log(1 + x) computed using W. Kahan's formula.
-    See: http://www.plunk.org/~hatch/rightway.php
- */
-template<typename Packet>
-Packet generic_plog1p(const Packet& x)
-{
-  typedef typename unpacket_traits<Packet>::type ScalarType;
-  const Packet one = pset1<Packet>(ScalarType(1));
-  Packet xp1 = padd(x, one);
-  Packet small_mask = pcmp_eq(xp1, one);
-  Packet log1 = plog(xp1);
-  Packet inf_mask = pcmp_eq(xp1, log1);
-  Packet log_large = pmul(x, pdiv(log1, psub(xp1, one)));
-  return pselect(por(small_mask, inf_mask), x, log_large);
-}
-
-/** \internal \returns exp(x)-1 computed using W. Kahan's formula.
-    See: http://www.plunk.org/~hatch/rightway.php
- */
-template<typename Packet>
-Packet generic_expm1(const Packet& x)
-{
-  typedef typename unpacket_traits<Packet>::type ScalarType;
-  const Packet one = pset1<Packet>(ScalarType(1));
-  const Packet neg_one = pset1<Packet>(ScalarType(-1));
-  Packet u = pexp(x);
-  Packet one_mask = pcmp_eq(u, one);
-  Packet u_minus_one = psub(u, one);
-  Packet neg_one_mask = pcmp_eq(u_minus_one, neg_one);
-  Packet logu = plog(u);
-  // The following comparison is to catch the case where
-  // exp(x) = +inf. It is written in this way to avoid having
-  // to form the constant +inf, which depends on the packet
-  // type.
-  Packet pos_inf_mask = pcmp_eq(logu, u);
-  Packet expm1 = pmul(u_minus_one, pdiv(x, logu));
-  expm1 = pselect(pos_inf_mask, u, expm1);
-  return pselect(one_mask,
-                 x,
-                 pselect(neg_one_mask,
-                         neg_one,
-                         expm1));
-}
-
 
 // Exponential function. Works by writing "x = m*log(2) + r" where
 // "m = floor(x/log(2)+1/2)" and "r" is the remainder. The result is then
@@ -515,62 +467,5 @@ Packet pcos_float(const Packet& x)
   return psincos_float<false>(x);
 }
 
-/* polevl (modified for Eigen)
- *
- *      Evaluate polynomial
- *
- *
- *
- * SYNOPSIS:
- *
- * int N;
- * Scalar x, y, coef[N+1];
- *
- * y = polevl<decltype(x), N>( x, coef);
- *
- *
- *
- * DESCRIPTION:
- *
- * Evaluates polynomial of degree N:
- *
- *                     2          N
- * y  =  C  + C x + C x  +...+ C x
- *        0    1     2          N
- *
- * Coefficients are stored in reverse order:
- *
- * coef[0] = C  , ..., coef[N] = C  .
- *            N                   0
- *
- *  The function p1evl() assumes that coef[N] = 1.0 and is
- * omitted from the array.  Its calling arguments are
- * otherwise the same as polevl().
- *
- *
- * The Eigen implementation is templatized.  For best speed, store
- * coef as a const array (constexpr), e.g.
- *
- * const double coef[] = {1.0, 2.0, 3.0, ...};
- *
- */
-template <typename Packet, int N>
-struct ppolevl {
-  static EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Packet run(const Packet& x, const typename unpacket_traits<Packet>::type coeff[]) {
-    EIGEN_STATIC_ASSERT((N > 0), YOU_MADE_A_PROGRAMMING_MISTAKE);
-    return pmadd(ppolevl<Packet, N-1>::run(x, coeff), x, pset1<Packet>(coeff[N]));
-  }
-};
-
-template <typename Packet>
-struct ppolevl<Packet, 0> {
-  static EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Packet run(const Packet& x, const typename unpacket_traits<Packet>::type coeff[]) {
-    EIGEN_UNUSED_VARIABLE(x);
-    return pset1<Packet>(coeff[0]);
-  }
-};
-
 } // end namespace internal
 } // end namespace Eigen
-
-#endif // EIGEN_ARCH_GENERIC_PACKET_MATH_FUNCTIONS_H

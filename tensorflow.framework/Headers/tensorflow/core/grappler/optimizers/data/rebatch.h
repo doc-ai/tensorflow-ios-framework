@@ -32,8 +32,6 @@ class RebatchOptimizer : public TFDataOptimizerBase {
 
   string name() const override { return "tf_data_rebatcher"; }
 
-  bool UsesFunctionLibrary() const override { return true; }
-
   Status Init(
       const tensorflow::RewriterConfig_CustomGraphOptimizer* config) override;
 

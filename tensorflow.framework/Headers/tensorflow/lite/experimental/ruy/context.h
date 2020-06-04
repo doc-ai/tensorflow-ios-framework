@@ -16,7 +16,6 @@ limitations under the License.
 #ifndef TENSORFLOW_LITE_EXPERIMENTAL_RUY_CONTEXT_H_
 #define TENSORFLOW_LITE_EXPERIMENTAL_RUY_CONTEXT_H_
 
-#include <cstddef>
 #include <memory>
 #include <vector>
 

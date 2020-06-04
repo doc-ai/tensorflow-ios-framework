@@ -252,8 +252,7 @@ void PreprocessLogSoftmaxScalingExp(double beta, double input_scale,
 // it must not overflow before we reduce the value by multiplication by the
 // input multiplier.  The negative radius is used as the minimum difference in
 // Softmax.
-int CalculateInputRadius(int input_integer_bits, int input_left_shift,
-                         int total_signed_bits = 31);
+int CalculateInputRadius(int input_integer_bits, int input_left_shift);
 
 // Nudges a min/max quantization range to ensure zero is zero.
 // Gymnastics with nudged zero point is to ensure that real zero maps to

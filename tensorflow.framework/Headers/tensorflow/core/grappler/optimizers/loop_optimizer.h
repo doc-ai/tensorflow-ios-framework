@@ -40,8 +40,6 @@ class LoopOptimizer : public GraphOptimizer {
 
   string name() const override { return "loop_optimizer"; };
 
-  bool UsesFunctionLibrary() const override { return false; }
-
   Status Optimize(Cluster* cluster, const GrapplerItem& item,
                   GraphDef* optimized_graph) override;
 

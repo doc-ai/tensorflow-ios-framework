@@ -16,8 +16,9 @@ limitations under the License.
 #ifndef TENSORFLOW_LITE_EXPERIMENTAL_RUY_BLOCK_MAP_H_
 #define TENSORFLOW_LITE_EXPERIMENTAL_RUY_BLOCK_MAP_H_
 
-#include "tensorflow/lite/experimental/ruy/side_pair.h"
+#include <cstdint>
 
+#include "tensorflow/lite/experimental/ruy/side_pair.h"
 namespace ruy {
 
 enum class BlockMapTraversalOrder {

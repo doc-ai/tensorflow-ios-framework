@@ -37,9 +37,8 @@ class Member {
  public:
   Member() = default;
 
-  Status SetParentAndSupportedDevices(
-      const Node& node, const std::vector<DeviceType>& types,
-      const DeviceNameUtils::ParsedName* local_address_spec);
+  Status SetParentAndSupportedDevices(const Node& node,
+                                      const std::vector<DeviceType>& types);
 
   const DeviceNameUtils::ParsedName& requested_device_name() const {
     return requested_device_name_;
@@ -204,13 +203,12 @@ class Member {
 class ColocationGraph {
  public:
   // graph, flib_def, and device_set must not be null and must outlive
-  // this ColocationGraph. default_local_device can be null. If not, must
-  // outlive this.
+  // this ColocationGraph. default_device can be null. If not, must outlive
+  // this.
   ColocationGraph(const Graph* graph, const FunctionStack& stack,
                   const FunctionLibraryDefinition* flib_def,
-                  const DeviceSet* device_set,
-                  const Device* default_local_device, bool allow_soft_placement,
-                  bool log_device_placement);
+                  const DeviceSet* device_set, const Device* default_device,
+                  bool allow_soft_placement, bool log_device_placement);
 
   Status Initialize();
 
@@ -256,7 +254,7 @@ class ColocationGraph {
   static std::vector<Device*> FilterSupportedDevices(
       const std::vector<Device*>& devices,
       const PrioritizedDeviceTypeVector& supported_device_types,
-      const Device* default_local_device);
+      const Device* default_device);
 
  private:
   // Adds each node of the Graph to this ColocationGraph as a singleton.
@@ -357,8 +355,7 @@ class ColocationGraph {
   PlacerInspectionRequiredOpChecker inspection_required_checker_;
   const DeviceSet& device_set_;
   const std::vector<DeviceType> device_types_;
-  const DeviceNameUtils::ParsedName local_address_spec_;
-  const Device* default_local_device_;
+  const Device* default_device_;
   const bool allow_soft_placement_;
   const bool log_device_placement_;
 

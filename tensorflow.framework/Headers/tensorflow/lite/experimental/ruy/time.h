@@ -17,12 +17,9 @@ limitations under the License.
 #define TENSORFLOW_LITE_EXPERIMENTAL_RUY_TIME_H_
 
 #include <chrono>  // NOLINT(build/c++11)
-#include <cstdint>  // IWYU pragma: keep
-#include <ratio>    // NOLINT(build/c++11)
+#include <cstdint>
 
 #ifdef __linux__
-#include <sys/time.h>  // for CLOCK_MONOTONIC_COARSE
-
 #include <ctime>
 #endif
 

@@ -8,6 +8,8 @@
 #ifndef EIGEN_MATH_FUNCTIONS_NEON_H
 #define EIGEN_MATH_FUNCTIONS_NEON_H
 
+#include "../Default/GenericPacketMathFunctions.h"
+
 namespace Eigen {
 
 namespace internal {

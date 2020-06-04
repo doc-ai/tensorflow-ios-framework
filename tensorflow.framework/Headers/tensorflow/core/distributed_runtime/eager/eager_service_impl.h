@@ -18,7 +18,6 @@ limitations under the License.
 
 #include "tensorflow/core/common_runtime/eager/context.h"
 #include "tensorflow/core/common_runtime/eager/tensor_handle.h"
-#include "tensorflow/core/distributed_runtime/eager/remote_mgr.h"
 #include "tensorflow/core/distributed_runtime/eager/remote_tensor_handle.h"
 #include "tensorflow/core/distributed_runtime/worker_env.h"
 #include "tensorflow/core/lib/core/refcount.h"
@@ -84,7 +83,6 @@ class EagerServiceImpl {
   Status CreateMasterContext(const tensorflow::uint64 context_id,
                              EagerContext* context);
 
-  // Used by both Enqueue and StreamingEnqueue RPCs.
   Status Enqueue(const EnqueueRequest* request, EnqueueResponse* response);
 
   Status WaitQueueDone(const WaitQueueDoneRequest* request,
@@ -163,40 +161,9 @@ class EagerServiceImpl {
   // The returned ServerContext will need to be Unrefed.
   tensorflow::Status GetServerContext(uint64, ServerContext**);
 
-  class ClientTensorHandleDeleteNode : public EagerNode {
-   public:
-    ClientTensorHandleDeleteNode(
-        ServerContext* context,
-        std::unique_ptr<RemoteTensorHandleInternal> handle_to_delete)
-        : tensorflow::EagerNode(),
-          context_(context),
-          handle_to_delete_(std::move(handle_to_delete)) {
-      context_->Ref();
-    }
-
-    ~ClientTensorHandleDeleteNode() override { context_->Unref(); }
-
-    Status Run() override {
-      VLOG(3) << "ServerContext: Deleting tensor handle "
-              << handle_to_delete_->op_id << ":"
-              << handle_to_delete_->output_num;
-      return context_->Context()->RemoteMgr()->DeleteTensorHandle(
-          *handle_to_delete_);
-    }
-
-    void Abort(Status status) override {}
-
-   private:
-    // Owns one reference.
-    ServerContext* const context_;
-    const std::unique_ptr<RemoteTensorHandleInternal> handle_to_delete_;
-  };
-
  private:
   Status ExecuteOp(const Operation& operation, EagerContext* eager_context,
                    QueueResponse* queue_response);
-  Status SendTensor(const SendTensorOp& send_tensor,
-                    EagerContext* eager_context);
   const WorkerEnv* const env_;  // Not owned.
 
   mutex contexts_mu_;

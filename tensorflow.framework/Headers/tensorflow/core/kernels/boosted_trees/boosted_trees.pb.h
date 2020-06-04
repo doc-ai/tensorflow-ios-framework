@@ -120,56 +120,30 @@ PROTOBUF_NAMESPACE_CLOSE
 namespace tensorflow {
 namespace boosted_trees {
 
-enum SplitTypeWithDefault : int {
-  INEQUALITY_DEFAULT_LEFT = 0,
-  INEQUALITY_DEFAULT_RIGHT = 1,
-  EQUALITY_DEFAULT_RIGHT = 3,
-  SplitTypeWithDefault_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
-  SplitTypeWithDefault_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
+enum BucketizedSplit_DefaultDirection : int {
+  BucketizedSplit_DefaultDirection_DEFAULT_LEFT = 0,
+  BucketizedSplit_DefaultDirection_DEFAULT_RIGHT = 1,
+  BucketizedSplit_DefaultDirection_BucketizedSplit_DefaultDirection_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
+  BucketizedSplit_DefaultDirection_BucketizedSplit_DefaultDirection_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
-bool SplitTypeWithDefault_IsValid(int value);
-constexpr SplitTypeWithDefault SplitTypeWithDefault_MIN = INEQUALITY_DEFAULT_LEFT;
-constexpr SplitTypeWithDefault SplitTypeWithDefault_MAX = EQUALITY_DEFAULT_RIGHT;
-constexpr int SplitTypeWithDefault_ARRAYSIZE = SplitTypeWithDefault_MAX + 1;
+bool BucketizedSplit_DefaultDirection_IsValid(int value);
+constexpr BucketizedSplit_DefaultDirection BucketizedSplit_DefaultDirection_DefaultDirection_MIN = BucketizedSplit_DefaultDirection_DEFAULT_LEFT;
+constexpr BucketizedSplit_DefaultDirection BucketizedSplit_DefaultDirection_DefaultDirection_MAX = BucketizedSplit_DefaultDirection_DEFAULT_RIGHT;
+constexpr int BucketizedSplit_DefaultDirection_DefaultDirection_ARRAYSIZE = BucketizedSplit_DefaultDirection_DefaultDirection_MAX + 1;
 
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SplitTypeWithDefault_descriptor();
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* BucketizedSplit_DefaultDirection_descriptor();
 template<typename T>
-inline const std::string& SplitTypeWithDefault_Name(T enum_t_value) {
-  static_assert(::std::is_same<T, SplitTypeWithDefault>::value ||
+inline const std::string& BucketizedSplit_DefaultDirection_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, BucketizedSplit_DefaultDirection>::value ||
     ::std::is_integral<T>::value,
-    "Incorrect type passed to function SplitTypeWithDefault_Name.");
+    "Incorrect type passed to function BucketizedSplit_DefaultDirection_Name.");
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
-    SplitTypeWithDefault_descriptor(), enum_t_value);
+    BucketizedSplit_DefaultDirection_descriptor(), enum_t_value);
 }
-inline bool SplitTypeWithDefault_Parse(
-    const std::string& name, SplitTypeWithDefault* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<SplitTypeWithDefault>(
-    SplitTypeWithDefault_descriptor(), name, value);
-}
-enum DefaultDirection : int {
-  DEFAULT_LEFT = 0,
-  DEFAULT_RIGHT = 1,
-  DefaultDirection_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
-  DefaultDirection_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
-};
-bool DefaultDirection_IsValid(int value);
-constexpr DefaultDirection DefaultDirection_MIN = DEFAULT_LEFT;
-constexpr DefaultDirection DefaultDirection_MAX = DEFAULT_RIGHT;
-constexpr int DefaultDirection_ARRAYSIZE = DefaultDirection_MAX + 1;
-
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* DefaultDirection_descriptor();
-template<typename T>
-inline const std::string& DefaultDirection_Name(T enum_t_value) {
-  static_assert(::std::is_same<T, DefaultDirection>::value ||
-    ::std::is_integral<T>::value,
-    "Incorrect type passed to function DefaultDirection_Name.");
-  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
-    DefaultDirection_descriptor(), enum_t_value);
-}
-inline bool DefaultDirection_Parse(
-    const std::string& name, DefaultDirection* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<DefaultDirection>(
-    DefaultDirection_descriptor(), name, value);
+inline bool BucketizedSplit_DefaultDirection_Parse(
+    const std::string& name, BucketizedSplit_DefaultDirection* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<BucketizedSplit_DefaultDirection>(
+    BucketizedSplit_DefaultDirection_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -1162,6 +1136,36 @@ class BucketizedSplit :
 
   // nested types ----------------------------------------------------
 
+  typedef BucketizedSplit_DefaultDirection DefaultDirection;
+  static constexpr DefaultDirection DEFAULT_LEFT =
+    BucketizedSplit_DefaultDirection_DEFAULT_LEFT;
+  static constexpr DefaultDirection DEFAULT_RIGHT =
+    BucketizedSplit_DefaultDirection_DEFAULT_RIGHT;
+  static inline bool DefaultDirection_IsValid(int value) {
+    return BucketizedSplit_DefaultDirection_IsValid(value);
+  }
+  static constexpr DefaultDirection DefaultDirection_MIN =
+    BucketizedSplit_DefaultDirection_DefaultDirection_MIN;
+  static constexpr DefaultDirection DefaultDirection_MAX =
+    BucketizedSplit_DefaultDirection_DefaultDirection_MAX;
+  static constexpr int DefaultDirection_ARRAYSIZE =
+    BucketizedSplit_DefaultDirection_DefaultDirection_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  DefaultDirection_descriptor() {
+    return BucketizedSplit_DefaultDirection_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& DefaultDirection_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, DefaultDirection>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function DefaultDirection_Name.");
+    return BucketizedSplit_DefaultDirection_Name(enum_t_value);
+  }
+  static inline bool DefaultDirection_Parse(const std::string& name,
+      DefaultDirection* value) {
+    return BucketizedSplit_DefaultDirection_Parse(name, value);
+  }
+
   // accessors -------------------------------------------------------
 
   // int32 feature_id = 1;
@@ -1194,11 +1198,11 @@ class BucketizedSplit :
   ::PROTOBUF_NAMESPACE_ID::int32 dimension_id() const;
   void set_dimension_id(::PROTOBUF_NAMESPACE_ID::int32 value);
 
-  // .tensorflow.boosted_trees.DefaultDirection default_direction = 6;
+  // .tensorflow.boosted_trees.BucketizedSplit.DefaultDirection default_direction = 6;
   void clear_default_direction();
   static const int kDefaultDirectionFieldNumber = 6;
-  ::tensorflow::boosted_trees::DefaultDirection default_direction() const;
-  void set_default_direction(::tensorflow::boosted_trees::DefaultDirection value);
+  ::tensorflow::boosted_trees::BucketizedSplit_DefaultDirection default_direction() const;
+  void set_default_direction(::tensorflow::boosted_trees::BucketizedSplit_DefaultDirection value);
 
   // @@protoc_insertion_point(class_scope:tensorflow.boosted_trees.BucketizedSplit)
  private:
@@ -1364,12 +1368,6 @@ class CategoricalSplit :
   ::PROTOBUF_NAMESPACE_ID::int32 right_id() const;
   void set_right_id(::PROTOBUF_NAMESPACE_ID::int32 value);
 
-  // int32 dimension_id = 5;
-  void clear_dimension_id();
-  static const int kDimensionIdFieldNumber = 5;
-  ::PROTOBUF_NAMESPACE_ID::int32 dimension_id() const;
-  void set_dimension_id(::PROTOBUF_NAMESPACE_ID::int32 value);
-
   // @@protoc_insertion_point(class_scope:tensorflow.boosted_trees.CategoricalSplit)
  private:
   class HasBitSetters;
@@ -1382,7 +1380,6 @@ class CategoricalSplit :
   ::PROTOBUF_NAMESPACE_ID::int32 value_;
   ::PROTOBUF_NAMESPACE_ID::int32 left_id_;
   ::PROTOBUF_NAMESPACE_ID::int32 right_id_;
-  ::PROTOBUF_NAMESPACE_ID::int32 dimension_id_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_tensorflow_2fcore_2fkernels_2fboosted_5ftrees_2fboosted_5ftrees_2eproto;
 };
@@ -3247,15 +3244,15 @@ inline void BucketizedSplit::set_dimension_id(::PROTOBUF_NAMESPACE_ID::int32 val
   // @@protoc_insertion_point(field_set:tensorflow.boosted_trees.BucketizedSplit.dimension_id)
 }
 
-// .tensorflow.boosted_trees.DefaultDirection default_direction = 6;
+// .tensorflow.boosted_trees.BucketizedSplit.DefaultDirection default_direction = 6;
 inline void BucketizedSplit::clear_default_direction() {
   default_direction_ = 0;
 }
-inline ::tensorflow::boosted_trees::DefaultDirection BucketizedSplit::default_direction() const {
+inline ::tensorflow::boosted_trees::BucketizedSplit_DefaultDirection BucketizedSplit::default_direction() const {
   // @@protoc_insertion_point(field_get:tensorflow.boosted_trees.BucketizedSplit.default_direction)
-  return static_cast< ::tensorflow::boosted_trees::DefaultDirection >(default_direction_);
+  return static_cast< ::tensorflow::boosted_trees::BucketizedSplit_DefaultDirection >(default_direction_);
 }
-inline void BucketizedSplit::set_default_direction(::tensorflow::boosted_trees::DefaultDirection value) {
+inline void BucketizedSplit::set_default_direction(::tensorflow::boosted_trees::BucketizedSplit_DefaultDirection value) {
   
   default_direction_ = value;
   // @@protoc_insertion_point(field_set:tensorflow.boosted_trees.BucketizedSplit.default_direction)
@@ -3319,20 +3316,6 @@ inline void CategoricalSplit::set_value(::PROTOBUF_NAMESPACE_ID::int32 value) {
   
   value_ = value;
   // @@protoc_insertion_point(field_set:tensorflow.boosted_trees.CategoricalSplit.value)
-}
-
-// int32 dimension_id = 5;
-inline void CategoricalSplit::clear_dimension_id() {
-  dimension_id_ = 0;
-}
-inline ::PROTOBUF_NAMESPACE_ID::int32 CategoricalSplit::dimension_id() const {
-  // @@protoc_insertion_point(field_get:tensorflow.boosted_trees.CategoricalSplit.dimension_id)
-  return dimension_id_;
-}
-inline void CategoricalSplit::set_dimension_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  
-  dimension_id_ = value;
-  // @@protoc_insertion_point(field_set:tensorflow.boosted_trees.CategoricalSplit.dimension_id)
 }
 
 // int32 left_id = 3;
@@ -3884,15 +3867,10 @@ DebugOutput::mutable_logits_path() {
 
 PROTOBUF_NAMESPACE_OPEN
 
-template <> struct is_proto_enum< ::tensorflow::boosted_trees::SplitTypeWithDefault> : ::std::true_type {};
+template <> struct is_proto_enum< ::tensorflow::boosted_trees::BucketizedSplit_DefaultDirection> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::tensorflow::boosted_trees::SplitTypeWithDefault>() {
-  return ::tensorflow::boosted_trees::SplitTypeWithDefault_descriptor();
-}
-template <> struct is_proto_enum< ::tensorflow::boosted_trees::DefaultDirection> : ::std::true_type {};
-template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::tensorflow::boosted_trees::DefaultDirection>() {
-  return ::tensorflow::boosted_trees::DefaultDirection_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::tensorflow::boosted_trees::BucketizedSplit_DefaultDirection>() {
+  return ::tensorflow::boosted_trees::BucketizedSplit_DefaultDirection_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

@@ -57,12 +57,12 @@ class MicroInterpreter {
   TfLiteStatus Invoke();
 
   size_t tensors_size() const { return context_.tensors_size; }
-  TfLiteTensor* tensor(size_t tensor_index);
+  TfLiteTensor* tensor(int tensor_index);
 
-  TfLiteTensor* input(size_t index);
+  TfLiteTensor* input(int index);
   size_t inputs_size() const { return subgraph_->inputs()->Length(); }
 
-  TfLiteTensor* output(size_t index);
+  TfLiteTensor* output(int index);
   size_t outputs_size() const { return subgraph_->outputs()->Length(); }
 
   TfLiteStatus initialization_status() const { return initialization_status_; }
@@ -70,10 +70,6 @@ class MicroInterpreter {
   ErrorReporter* error_reporter() { return error_reporter_; }
 
  private:
-  void CorrectTensorEndianness(TfLiteTensor* tensorCorr);
-
-  template <class T>
-  void CorrectTensorDataEndianness(T* data, int32_t size);
 
   const Model* model_;
   const OpResolver& op_resolver_;

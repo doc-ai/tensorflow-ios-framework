@@ -141,8 +141,6 @@ class WeightedQuantilesStream {
     finalized_ = true;
   }
 
-  bool IsFinalized() { return finalized_; }
-
   // Generates requested number of quantiles after finalizing stream.
   // The returned quantiles can be queried using std::lower_bound to get
   // the bucket for a given value.

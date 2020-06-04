@@ -42,7 +42,6 @@
 #include "tensorflow/core/framework/types.pb.h"
 #include "tensorflow/core/protobuf/saved_object_graph.pb.h"
 #include "tensorflow/core/protobuf/saver.pb.h"
-#include "tensorflow/core/protobuf/struct.pb.h"
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 #define PROTOBUF_INTERNAL_EXPORT_tensorflow_2fcore_2fprotobuf_2fmeta_5fgraph_2eproto
@@ -58,7 +57,7 @@ struct TableStruct_tensorflow_2fcore_2fprotobuf_2fmeta_5fgraph_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[17]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[16]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -111,9 +110,6 @@ extern SignatureDef_OutputsEntry_DoNotUseDefaultTypeInternal _SignatureDef_Outpu
 class TensorInfo;
 class TensorInfoDefaultTypeInternal;
 extern TensorInfoDefaultTypeInternal _TensorInfo_default_instance_;
-class TensorInfo_CompositeTensor;
-class TensorInfo_CompositeTensorDefaultTypeInternal;
-extern TensorInfo_CompositeTensorDefaultTypeInternal _TensorInfo_CompositeTensor_default_instance_;
 class TensorInfo_CooSparse;
 class TensorInfo_CooSparseDefaultTypeInternal;
 extern TensorInfo_CooSparseDefaultTypeInternal _TensorInfo_CooSparse_default_instance_;
@@ -134,7 +130,6 @@ template<> ::tensorflow::SignatureDef* Arena::CreateMaybeMessage<::tensorflow::S
 template<> ::tensorflow::SignatureDef_InputsEntry_DoNotUse* Arena::CreateMaybeMessage<::tensorflow::SignatureDef_InputsEntry_DoNotUse>(Arena*);
 template<> ::tensorflow::SignatureDef_OutputsEntry_DoNotUse* Arena::CreateMaybeMessage<::tensorflow::SignatureDef_OutputsEntry_DoNotUse>(Arena*);
 template<> ::tensorflow::TensorInfo* Arena::CreateMaybeMessage<::tensorflow::TensorInfo>(Arena*);
-template<> ::tensorflow::TensorInfo_CompositeTensor* Arena::CreateMaybeMessage<::tensorflow::TensorInfo_CompositeTensor>(Arena*);
 template<> ::tensorflow::TensorInfo_CooSparse* Arena::CreateMaybeMessage<::tensorflow::TensorInfo_CooSparse>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace tensorflow {
@@ -1866,166 +1861,6 @@ class TensorInfo_CooSparse :
 };
 // -------------------------------------------------------------------
 
-class TensorInfo_CompositeTensor :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:tensorflow.TensorInfo.CompositeTensor) */ {
- public:
-  TensorInfo_CompositeTensor();
-  virtual ~TensorInfo_CompositeTensor();
-
-  TensorInfo_CompositeTensor(const TensorInfo_CompositeTensor& from);
-  TensorInfo_CompositeTensor(TensorInfo_CompositeTensor&& from) noexcept
-    : TensorInfo_CompositeTensor() {
-    *this = ::std::move(from);
-  }
-
-  inline TensorInfo_CompositeTensor& operator=(const TensorInfo_CompositeTensor& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline TensorInfo_CompositeTensor& operator=(TensorInfo_CompositeTensor&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArena() const final {
-    return GetArenaNoVirtual();
-  }
-  inline void* GetMaybeArenaPointer() const final {
-    return MaybeArenaPtr();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return GetMetadataStatic().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return GetMetadataStatic().reflection;
-  }
-  static const TensorInfo_CompositeTensor& default_instance();
-
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const TensorInfo_CompositeTensor* internal_default_instance() {
-    return reinterpret_cast<const TensorInfo_CompositeTensor*>(
-               &_TensorInfo_CompositeTensor_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    11;
-
-  void UnsafeArenaSwap(TensorInfo_CompositeTensor* other);
-  void Swap(TensorInfo_CompositeTensor* other);
-  friend void swap(TensorInfo_CompositeTensor& a, TensorInfo_CompositeTensor& b) {
-    a.Swap(&b);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline TensorInfo_CompositeTensor* New() const final {
-    return CreateMaybeMessage<TensorInfo_CompositeTensor>(nullptr);
-  }
-
-  TensorInfo_CompositeTensor* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<TensorInfo_CompositeTensor>(arena);
-  }
-  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const TensorInfo_CompositeTensor& from);
-  void MergeFrom(const TensorInfo_CompositeTensor& from);
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  #else
-  bool MergePartialFromCodedStream(
-      ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) final;
-  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  void SerializeWithCachedSizes(
-      ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* InternalSerializeWithCachedSizesToArray(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  inline void SharedCtor();
-  inline void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(TensorInfo_CompositeTensor* other);
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "tensorflow.TensorInfo.CompositeTensor";
-  }
-  protected:
-  explicit TensorInfo_CompositeTensor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  private:
-  static void ArenaDtor(void* object);
-  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  private:
-  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
-    return _internal_metadata_.arena();
-  }
-  inline void* MaybeArenaPtr() const {
-    return _internal_metadata_.raw_arena_ptr();
-  }
-  public:
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-  private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
-    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_tensorflow_2fcore_2fprotobuf_2fmeta_5fgraph_2eproto);
-    return ::descriptor_table_tensorflow_2fcore_2fprotobuf_2fmeta_5fgraph_2eproto.file_level_metadata[kIndexInFileMessages];
-  }
-
-  public:
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // repeated .tensorflow.TensorInfo components = 2;
-  int components_size() const;
-  void clear_components();
-  static const int kComponentsFieldNumber = 2;
-  ::tensorflow::TensorInfo* mutable_components(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::tensorflow::TensorInfo >*
-      mutable_components();
-  const ::tensorflow::TensorInfo& components(int index) const;
-  ::tensorflow::TensorInfo* add_components();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::tensorflow::TensorInfo >&
-      components() const;
-
-  // .tensorflow.TypeSpecProto type_spec = 1;
-  bool has_type_spec() const;
-  void clear_type_spec();
-  static const int kTypeSpecFieldNumber = 1;
-  const ::tensorflow::TypeSpecProto& type_spec() const;
-  ::tensorflow::TypeSpecProto* release_type_spec();
-  ::tensorflow::TypeSpecProto* mutable_type_spec();
-  void set_allocated_type_spec(::tensorflow::TypeSpecProto* type_spec);
-  void unsafe_arena_set_allocated_type_spec(
-      ::tensorflow::TypeSpecProto* type_spec);
-  ::tensorflow::TypeSpecProto* unsafe_arena_release_type_spec();
-
-  // @@protoc_insertion_point(class_scope:tensorflow.TensorInfo.CompositeTensor)
- private:
-  class HasBitSetters;
-
-  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::tensorflow::TensorInfo > components_;
-  ::tensorflow::TypeSpecProto* type_spec_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_tensorflow_2fcore_2fprotobuf_2fmeta_5fgraph_2eproto;
-};
-// -------------------------------------------------------------------
-
 class TensorInfo :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:tensorflow.TensorInfo) */ {
  public:
@@ -2071,7 +1906,6 @@ class TensorInfo :
   enum EncodingCase {
     kName = 1,
     kCooSparse = 4,
-    kCompositeTensor = 5,
     ENCODING_NOT_SET = 0,
   };
 
@@ -2081,7 +1915,7 @@ class TensorInfo :
                &_TensorInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    11;
 
   void UnsafeArenaSwap(TensorInfo* other);
   void Swap(TensorInfo* other);
@@ -2153,7 +1987,6 @@ class TensorInfo :
   // nested types ----------------------------------------------------
 
   typedef TensorInfo_CooSparse CooSparse;
-  typedef TensorInfo_CompositeTensor CompositeTensor;
 
   // accessors -------------------------------------------------------
 
@@ -2211,18 +2044,6 @@ class TensorInfo :
       ::tensorflow::TensorInfo_CooSparse* coo_sparse);
   ::tensorflow::TensorInfo_CooSparse* unsafe_arena_release_coo_sparse();
 
-  // .tensorflow.TensorInfo.CompositeTensor composite_tensor = 5;
-  bool has_composite_tensor() const;
-  void clear_composite_tensor();
-  static const int kCompositeTensorFieldNumber = 5;
-  const ::tensorflow::TensorInfo_CompositeTensor& composite_tensor() const;
-  ::tensorflow::TensorInfo_CompositeTensor* release_composite_tensor();
-  ::tensorflow::TensorInfo_CompositeTensor* mutable_composite_tensor();
-  void set_allocated_composite_tensor(::tensorflow::TensorInfo_CompositeTensor* composite_tensor);
-  void unsafe_arena_set_allocated_composite_tensor(
-      ::tensorflow::TensorInfo_CompositeTensor* composite_tensor);
-  ::tensorflow::TensorInfo_CompositeTensor* unsafe_arena_release_composite_tensor();
-
   void clear_encoding();
   EncodingCase encoding_case() const;
   // @@protoc_insertion_point(class_scope:tensorflow.TensorInfo)
@@ -2230,7 +2051,6 @@ class TensorInfo :
   class HasBitSetters;
   void set_has_name();
   void set_has_coo_sparse();
-  void set_has_composite_tensor();
 
   inline bool has_encoding() const;
   inline void clear_has_encoding();
@@ -2245,7 +2065,6 @@ class TensorInfo :
     EncodingUnion() {}
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
     ::tensorflow::TensorInfo_CooSparse* coo_sparse_;
-    ::tensorflow::TensorInfo_CompositeTensor* composite_tensor_;
   } encoding_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   ::PROTOBUF_NAMESPACE_ID::uint32 _oneof_case_[1];
@@ -2278,7 +2097,7 @@ public:
   private:
   static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
     ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_tensorflow_2fcore_2fprotobuf_2fmeta_5fgraph_2eproto);
-    return ::descriptor_table_tensorflow_2fcore_2fprotobuf_2fmeta_5fgraph_2eproto.file_level_metadata[13];
+    return ::descriptor_table_tensorflow_2fcore_2fprotobuf_2fmeta_5fgraph_2eproto.file_level_metadata[12];
   }
 
   public:
@@ -2310,7 +2129,7 @@ public:
   private:
   static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
     ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_tensorflow_2fcore_2fprotobuf_2fmeta_5fgraph_2eproto);
-    return ::descriptor_table_tensorflow_2fcore_2fprotobuf_2fmeta_5fgraph_2eproto.file_level_metadata[14];
+    return ::descriptor_table_tensorflow_2fcore_2fprotobuf_2fmeta_5fgraph_2eproto.file_level_metadata[13];
   }
 
   public:
@@ -2366,7 +2185,7 @@ class SignatureDef :
                &_SignatureDef_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    14;
 
   void UnsafeArenaSwap(SignatureDef* other);
   void Swap(SignatureDef* other);
@@ -2553,7 +2372,7 @@ class AssetFileDef :
                &_AssetFileDef_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    15;
 
   void UnsafeArenaSwap(AssetFileDef* other);
   void Swap(AssetFileDef* other);
@@ -4196,95 +4015,6 @@ inline void TensorInfo_CooSparse::unsafe_arena_set_allocated_dense_shape_tensor_
 
 // -------------------------------------------------------------------
 
-// TensorInfo_CompositeTensor
-
-// .tensorflow.TypeSpecProto type_spec = 1;
-inline bool TensorInfo_CompositeTensor::has_type_spec() const {
-  return this != internal_default_instance() && type_spec_ != nullptr;
-}
-inline const ::tensorflow::TypeSpecProto& TensorInfo_CompositeTensor::type_spec() const {
-  const ::tensorflow::TypeSpecProto* p = type_spec_;
-  // @@protoc_insertion_point(field_get:tensorflow.TensorInfo.CompositeTensor.type_spec)
-  return p != nullptr ? *p : *reinterpret_cast<const ::tensorflow::TypeSpecProto*>(
-      &::tensorflow::_TypeSpecProto_default_instance_);
-}
-inline ::tensorflow::TypeSpecProto* TensorInfo_CompositeTensor::release_type_spec() {
-  // @@protoc_insertion_point(field_release:tensorflow.TensorInfo.CompositeTensor.type_spec)
-  
-  ::tensorflow::TypeSpecProto* temp = type_spec_;
-  if (GetArenaNoVirtual() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-  type_spec_ = nullptr;
-  return temp;
-}
-inline ::tensorflow::TypeSpecProto* TensorInfo_CompositeTensor::unsafe_arena_release_type_spec() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:tensorflow.TensorInfo.CompositeTensor.type_spec)
-  
-  ::tensorflow::TypeSpecProto* temp = type_spec_;
-  type_spec_ = nullptr;
-  return temp;
-}
-inline ::tensorflow::TypeSpecProto* TensorInfo_CompositeTensor::mutable_type_spec() {
-  
-  if (type_spec_ == nullptr) {
-    auto* p = CreateMaybeMessage<::tensorflow::TypeSpecProto>(GetArenaNoVirtual());
-    type_spec_ = p;
-  }
-  // @@protoc_insertion_point(field_mutable:tensorflow.TensorInfo.CompositeTensor.type_spec)
-  return type_spec_;
-}
-inline void TensorInfo_CompositeTensor::set_allocated_type_spec(::tensorflow::TypeSpecProto* type_spec) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
-  if (message_arena == nullptr) {
-    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(type_spec_);
-  }
-  if (type_spec) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
-    if (message_arena != submessage_arena) {
-      type_spec = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, type_spec, submessage_arena);
-    }
-    
-  } else {
-    
-  }
-  type_spec_ = type_spec;
-  // @@protoc_insertion_point(field_set_allocated:tensorflow.TensorInfo.CompositeTensor.type_spec)
-}
-
-// repeated .tensorflow.TensorInfo components = 2;
-inline int TensorInfo_CompositeTensor::components_size() const {
-  return components_.size();
-}
-inline void TensorInfo_CompositeTensor::clear_components() {
-  components_.Clear();
-}
-inline ::tensorflow::TensorInfo* TensorInfo_CompositeTensor::mutable_components(int index) {
-  // @@protoc_insertion_point(field_mutable:tensorflow.TensorInfo.CompositeTensor.components)
-  return components_.Mutable(index);
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::tensorflow::TensorInfo >*
-TensorInfo_CompositeTensor::mutable_components() {
-  // @@protoc_insertion_point(field_mutable_list:tensorflow.TensorInfo.CompositeTensor.components)
-  return &components_;
-}
-inline const ::tensorflow::TensorInfo& TensorInfo_CompositeTensor::components(int index) const {
-  // @@protoc_insertion_point(field_get:tensorflow.TensorInfo.CompositeTensor.components)
-  return components_.Get(index);
-}
-inline ::tensorflow::TensorInfo* TensorInfo_CompositeTensor::add_components() {
-  // @@protoc_insertion_point(field_add:tensorflow.TensorInfo.CompositeTensor.components)
-  return components_.Add();
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::tensorflow::TensorInfo >&
-TensorInfo_CompositeTensor::components() const {
-  // @@protoc_insertion_point(field_list:tensorflow.TensorInfo.CompositeTensor.components)
-  return components_;
-}
-
-// -------------------------------------------------------------------
-
 // TensorInfo
 
 // string name = 1;
@@ -4470,71 +4200,6 @@ inline ::tensorflow::TensorInfo_CooSparse* TensorInfo::mutable_coo_sparse() {
   }
   // @@protoc_insertion_point(field_mutable:tensorflow.TensorInfo.coo_sparse)
   return encoding_.coo_sparse_;
-}
-
-// .tensorflow.TensorInfo.CompositeTensor composite_tensor = 5;
-inline bool TensorInfo::has_composite_tensor() const {
-  return encoding_case() == kCompositeTensor;
-}
-inline void TensorInfo::set_has_composite_tensor() {
-  _oneof_case_[0] = kCompositeTensor;
-}
-inline void TensorInfo::clear_composite_tensor() {
-  if (has_composite_tensor()) {
-    if (GetArenaNoVirtual() == nullptr) {
-      delete encoding_.composite_tensor_;
-    }
-    clear_has_encoding();
-  }
-}
-inline ::tensorflow::TensorInfo_CompositeTensor* TensorInfo::release_composite_tensor() {
-  // @@protoc_insertion_point(field_release:tensorflow.TensorInfo.composite_tensor)
-  if (has_composite_tensor()) {
-    clear_has_encoding();
-      ::tensorflow::TensorInfo_CompositeTensor* temp = encoding_.composite_tensor_;
-    if (GetArenaNoVirtual() != nullptr) {
-      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-    }
-    encoding_.composite_tensor_ = nullptr;
-    return temp;
-  } else {
-    return nullptr;
-  }
-}
-inline const ::tensorflow::TensorInfo_CompositeTensor& TensorInfo::composite_tensor() const {
-  // @@protoc_insertion_point(field_get:tensorflow.TensorInfo.composite_tensor)
-  return has_composite_tensor()
-      ? *encoding_.composite_tensor_
-      : *reinterpret_cast< ::tensorflow::TensorInfo_CompositeTensor*>(&::tensorflow::_TensorInfo_CompositeTensor_default_instance_);
-}
-inline ::tensorflow::TensorInfo_CompositeTensor* TensorInfo::unsafe_arena_release_composite_tensor() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:tensorflow.TensorInfo.composite_tensor)
-  if (has_composite_tensor()) {
-    clear_has_encoding();
-    ::tensorflow::TensorInfo_CompositeTensor* temp = encoding_.composite_tensor_;
-    encoding_.composite_tensor_ = nullptr;
-    return temp;
-  } else {
-    return nullptr;
-  }
-}
-inline void TensorInfo::unsafe_arena_set_allocated_composite_tensor(::tensorflow::TensorInfo_CompositeTensor* composite_tensor) {
-  clear_encoding();
-  if (composite_tensor) {
-    set_has_composite_tensor();
-    encoding_.composite_tensor_ = composite_tensor;
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:tensorflow.TensorInfo.composite_tensor)
-}
-inline ::tensorflow::TensorInfo_CompositeTensor* TensorInfo::mutable_composite_tensor() {
-  if (!has_composite_tensor()) {
-    clear_encoding();
-    set_has_composite_tensor();
-    encoding_.composite_tensor_ = CreateMaybeMessage< ::tensorflow::TensorInfo_CompositeTensor >(
-        GetArenaNoVirtual());
-  }
-  // @@protoc_insertion_point(field_mutable:tensorflow.TensorInfo.composite_tensor)
-  return encoding_.composite_tensor_;
 }
 
 // .tensorflow.DataType dtype = 2;
@@ -4875,8 +4540,6 @@ inline void AssetFileDef::unsafe_arena_set_allocated_filename(
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
-// -------------------------------------------------------------------
-
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

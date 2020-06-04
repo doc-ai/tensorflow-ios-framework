@@ -123,10 +123,16 @@ class Executable {
   // enabled.
   //
   // Returns a shaped buffer containing the result of the computation.
-  StatusOr<ScopedShapedBuffer> ExecuteOnStream(
+  virtual StatusOr<ScopedShapedBuffer> ExecuteOnStream(
       const ServiceExecutableRunOptions* run_options,
       absl::Span<const ShapedBuffer* const> arguments,
-      HloExecutionProfile* hlo_execution_profile);
+      HloExecutionProfile* hlo_execution_profile) = 0;
+
+  // Same as ExecuteOnStream(), but this call is non-blocking and returns as
+  // soon as all of the operations are enqueued for launch on the stream.
+  virtual StatusOr<ScopedShapedBuffer> ExecuteAsyncOnStream(
+      const ServiceExecutableRunOptions* run_options,
+      absl::Span<const ShapedBuffer* const> arguments) = 0;
 
   // Starts the given program executing on the given stream/executor.
   //
@@ -137,31 +143,20 @@ class Executable {
   //
   // If an input is donated to XLA but is not reused as output, it is returned
   // as an leftover buffer for the caller to release.
-  //
-  // This call should be non-blocking and may return as soon as all of the
-  // operations are enqueued for launch on the stream. Note that some
-  // implementations may in fact block or may block in some circumstances (e.g.,
-  // when profiling); i.e., asynchronous is a "may" not a "must".
-  //
-  // If the hlo_execution_profile is provided as non-nullptr, profiling will be
-  // enabled. Note that profiling is tricky to use correctly, as the profiling
-  // objects (when they exist) must out-live the task.
-  virtual StatusOr<ScopedShapedBuffer> ExecuteAsyncOnStream(
-      const ServiceExecutableRunOptions* run_options,
-      absl::Span<const ShapedBuffer* const> arguments,
-      HloExecutionProfile* hlo_execution_profile) = 0;
-
-  // Same as ExecuteAsyncOnStream(), but blocks waiting for the computation to
-  // complete.
-  StatusOr<ExecutionOutput> ExecuteOnStream(
+  virtual StatusOr<ExecutionOutput> ExecuteOnStream(
       const ServiceExecutableRunOptions* run_options,
       std::vector<ShapeTree<xla::MaybeOwningDeviceMemory>> arguments,
-      HloExecutionProfile* hlo_execution_profile);
+      HloExecutionProfile* hlo_execution_profile) {
+    return Unimplemented(
+        "MaybeOwningDeviceMemory version of overload is not implemented ");
+  }
 
   virtual StatusOr<ExecutionOutput> ExecuteAsyncOnStream(
       const ServiceExecutableRunOptions* run_options,
-      std::vector<ShapeTree<xla::MaybeOwningDeviceMemory>> arguments,
-      HloExecutionProfile* hlo_execution_profile);
+      std::vector<ShapeTree<xla::MaybeOwningDeviceMemory>> arguments) {
+    return Unimplemented(
+        "MaybeOwningDeviceMemory version of overload is not implemented ");
+  }
 
   // Same as ExecuteOnStream(), but runs this executable on multiple
   // streams. arguments[i] contains the arguments to the execution on
@@ -185,10 +180,6 @@ class Executable {
   // timer for the execution, sets up HLO profiling if enabled, and fills in the
   // given ExecutionProfile if non-null.
   StatusOr<ScopedShapedBuffer> ExecuteOnStreamWrapper(
-      const ServiceExecutableRunOptions* run_options,
-      absl::Span<const ShapedBuffer* const> arguments);
-
-  StatusOr<ScopedShapedBuffer> ExecuteAsyncOnStreamWrapper(
       const ServiceExecutableRunOptions* run_options,
       absl::Span<const ShapedBuffer* const> arguments);
 

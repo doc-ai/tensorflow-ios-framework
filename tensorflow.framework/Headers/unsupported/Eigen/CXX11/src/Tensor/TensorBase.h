@@ -202,12 +202,6 @@ class TensorBase<Derived, ReadOnlyAccessors>
     }
 
     EIGEN_DEVICE_FUNC
-    EIGEN_STRONG_INLINE const TensorCwiseUnaryOp<internal::scalar_ndtri_op<Scalar>, const Derived>
-    ndtri() const {
-      return unaryExpr(internal::scalar_ndtri_op<Scalar>());
-    }
-
-    EIGEN_DEVICE_FUNC
     EIGEN_STRONG_INLINE const TensorCwiseUnaryOp<internal::scalar_logistic_op<Scalar>, const Derived>
     sigmoid() const {
       return unaryExpr(internal::scalar_logistic_op<Scalar>());
@@ -1068,17 +1062,6 @@ class TensorBase : public TensorBase<Derived, ReadOnlyAccessors> {
     TensorDevice<Derived, DeviceType> device(const DeviceType& dev) {
       return TensorDevice<Derived, DeviceType>(dev, derived());
     }
-
-#ifdef EIGEN_USE_THREADS
-    // Select the async device on which to evaluate the expression.
-    template <typename DeviceType, typename DoneCallback>
-    typename internal::enable_if<
-        internal::is_same<DeviceType, ThreadPoolDevice>::value,
-        TensorAsyncDevice<Derived, DeviceType, DoneCallback>>::type
-    device(const DeviceType& dev, DoneCallback done) {
-      return TensorAsyncDevice<Derived, DeviceType, DoneCallback>(dev, derived(), std::move(done));
-    }
-#endif  // EIGEN_USE_THREADS
 
  protected:
     EIGEN_DEVICE_FUNC
