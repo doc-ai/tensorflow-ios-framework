@@ -1,6 +1,6 @@
 # TensorFlow iOS Framework
 
-A full build of TensorFlow for iOS. Unofficial. Latest is v2.0.3 based on Tensorflow r2.0, v2.0.2.
+A full build of TensorFlow for iOS. Unofficial. Latest is v2.0.4 based on Tensorflow r2.0, v2.0.2 and built with Xcode 12.2 (12B45b).
 
 Framework targets simluator and arm64 devices only (iOS 12.0+) with full support for training MobileNetV2 models on device.
 
@@ -10,16 +10,16 @@ This repository contains only the required header files for a portable build of 
 
 To create this framework, first run *build_all_ios.sh* from *tensorflow/contrib/makefile* on branch *r2.0.doc.ai* in our custom [tensorflow repository](https://github.com/doc-ai/tensorflow/tree/r2.0.doc.ai) and then run *create_full_ios_frameworks.sh* in the same directory.
 
-The following static library must be added to the root directory of this framework. Remove the *.a* extension:
+The following static library must be added to the root directory of this framework. Rename it simply to *tensorflow*
 
-- [tensorflow.a](https://storage.googleapis.com/tensorio-build/r2.0/tensorflow)
+- [libtensorflow-core.a](https://storage.googleapis.com/tensorio-build/ios/release/2.0/xcodebuild/12B45b/tag/2.0.4/lib/libtensorflow-core.a)
 
 You may also run the *download_libs.sh* script in this repository to download and add the tensorflow static library to the framework.
 
 The following additional static libraries must be added as dependencies to any project which uses this framework:
 
-- [protobuf.a](https://storage.googleapis.com/tensorio-build/r2.0/libprotobuf)
-- [nsync.a](https://storage.googleapis.com/tensorio-build/r2.0/nsync)
+- [libprotobuf.a](https://storage.googleapis.com/tensorio-build/ios/release/2.0/xcodebuild/12B45b/tag/2.0.4/lib/libprotobuf.a)
+- [nsync.a](https://storage.googleapis.com/tensorio-build/ios/release/2.0/xcodebuild/12B45b/tag/2.0.4/lib/nsync.a)
 
 ## Usage
 
