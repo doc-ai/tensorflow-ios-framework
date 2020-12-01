@@ -10,16 +10,16 @@ This repository contains only the required header files for a portable build of 
 
 To create this framework, first run *build_all_ios.sh* from *tensorflow/contrib/makefile* on branch *r1.13.doc.ai* in our custom [tensorflow repository](https://github.com/doc-ai/tensorflow/tree/r1.13.doc.ai) and then run *create_full_ios_frameworks.sh* in the same directory.
 
-The following static library must be added to the root directory of this framework. Remove the *.a* extension:
+The following static library must be added to the root directory of this framework. Rename to simply *tensorflow*:
 
-- [tensorflow.a](https://storage.googleapis.com/tensorio-build/r1.13/tensorflow)
+- [libtensorflow-core.a](https://storage.googleapis.com/tensorio-build/ios/release/1.13/xcodebuild/11E146/tag/1.13.6/lib/libtensorflow-core.a)
 
 You may also run the *download_libs.sh* script in this repository to download and add the tensorflow static library to the framework.
 
 The following additional static libraries must be added as dependencies to any project which uses this framework:
 
-- [protobuf.a](https://storage.googleapis.com/tensorio-build/r1.13/libprotobuf)
-- [nsync.a](https://storage.googleapis.com/tensorio-build/r1.13/nsync)
+- [libprotobuf.a](https://storage.googleapis.com/tensorio-build/ios/release/1.13/xcodebuild/11E146/tag/1.13.6/lib/libprotobuf.a)
+- [nsync.a](https://storage.googleapis.com/tensorio-build/ios/release/1.13/xcodebuild/11E146/tag/1.13.6/lib/nsync.a)
 
 ## Usage
 
